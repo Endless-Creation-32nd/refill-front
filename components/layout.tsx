@@ -1,11 +1,24 @@
 import { useRouter } from 'next/router';
-import { PropsWithChildren } from 'react';
+import { PropsWithChildren, ReactNode } from 'react';
 import useSWR from 'swr';
 import fetcher from '../utils/fetcher';
 import Header from './header';
 import Nav from './nav';
 
-const Layout = ({ children }: PropsWithChildren<{}>) => {
+interface PropsType {
+  leftChild?: ReactNode;
+  middleChild?: ReactNode;
+  rightChild?: ReactNode;
+  hasNav?: boolean;
+}
+
+const Layout = ({
+  leftChild,
+  middleChild,
+  rightChild,
+  hasNav = true,
+  children,
+}: PropsWithChildren<PropsType>) => {
   const { data } = useSWR('/api/auth', fetcher);
   const router = useRouter();
 
@@ -15,13 +28,17 @@ const Layout = ({ children }: PropsWithChildren<{}>) => {
   // }
   return (
     <>
-      <Header />
+      <Header
+        leftChild={leftChild}
+        middleChild={middleChild}
+        rightChild={rightChild}
+      />
       <main className='bg-gray-100'>
         <div className='mx-auto my-0 min-h-screen bg-white px-4 md:w-3/4 lg:w-[768px]'>
           {children}
         </div>
       </main>
-      <Nav />
+      {hasNav && <Nav />}
     </>
   );
 };

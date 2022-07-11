@@ -24,10 +24,13 @@ const Writing = () => {
     return <div>loading...</div>;
   }
   const writingList = writingData.flat();
+
+  const leftChild = <h1 className='text-2xl font-bold'>글감</h1>;
+
   return (
-    <Layout>
+    <Layout leftChild={leftChild}>
       <div>
-        <ul className='my-6 flex gap-2'>
+        <ul className='my-6 flex flex-wrap gap-2'>
           {WRITING_LIST.map((category, index) => {
             const activeClassName =
               category === query.category

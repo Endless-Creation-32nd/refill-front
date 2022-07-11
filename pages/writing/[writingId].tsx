@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { useRouter } from 'next/router';
+import Layout from '../../components/layout';
 
 const imageUrl =
   'http://www.kpipa.or.kr/upload/book/KP0062/1384146725763_4162.jpg';
@@ -12,24 +13,25 @@ const linkUrl =
 const Detail = () => {
   const router = useRouter();
 
+  const leftChild = <button onClick={() => router.back()}>&lt;</button>;
+
   return (
     <>
-      <header className='sticky inset-x-0 top-0 z-[99] h-10 bg-white px-4'>
-        <button onClick={() => router.back()}>&lt;</button>
-      </header>
-      <div className='flex flex-col p-4'>
-        <div className='relative h-[246px] w-[158px] self-center'>
-          <Image
-            src={imageUrl}
-            alt='book'
-            layout='fill'
-            objectFit='cover'
-            className='rounded-md'
-          />
+      <Layout leftChild={leftChild} hasNav={false}>
+        <div className='flex flex-col'>
+          <div className='relative h-[246px] w-[158px] self-center'>
+            <Image
+              src={imageUrl}
+              alt='book'
+              layout='fill'
+              objectFit='cover'
+              className='rounded-md'
+            />
+          </div>
+          <h1 className='mt-2 text-2xl font-bold'>{title}</h1>
+          <p className='mt-4 indent-2 text-[#666666]'>{desicription}</p>
         </div>
-        <h1 className='mt-2 text-2xl font-bold'>{title}</h1>
-        <p className='mt-4 indent-2 text-[#666666]'>{desicription}</p>
-      </div>
+      </Layout>
       <a
         href={linkUrl}
         className='sticky inset-x-0 bottom-0 flex justify-center bg-black py-4 text-2xl text-mint-main'
