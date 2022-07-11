@@ -11,10 +11,14 @@ const Header: React.FC<PropsType> = ({
   rightChild,
 }) => {
   return (
-    <header className='sticky top-0 left-0 z-[99] flex h-16 w-full items-center justify-between border-b-[1px] border-t-gray-400 bg-white px-4 drop-shadow-sm'>
-      {leftChild || <div id='left-child'></div>}
-      {middleChild || <div id='middle-child'></div>}
-      {rightChild || <div id='right-child'></div>}
+    <header className='sticky top-0 left-0 z-[99] flex h-16 w-full items-center justify-between bg-white px-4'>
+      <div id='left-child' className='flex flex-1 justify-start'>
+        {leftChild || <></>}
+      </div>
+      <div id='middle-child'>{middleChild || <></>}</div>
+      <div id='right-child' className='flex flex-1 justify-end'>
+        {rightChild || <></>}
+      </div>
     </header>
   );
 };
