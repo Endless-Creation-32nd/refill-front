@@ -6,9 +6,9 @@ import Header from './header';
 import Nav from './nav';
 
 interface PropsType {
-  leftChild?: ReactNode;
-  middleChild?: ReactNode;
-  rightChild?: ReactNode;
+  leftChild?: ReactNode | JSX.Element;
+  middleChild?: ReactNode | JSX.Element;
+  rightChild?: ReactNode | JSX.Element;
   hasNav?: boolean;
 }
 
@@ -33,8 +33,8 @@ const Layout = ({
         middleChild={middleChild}
         rightChild={rightChild}
       />
-      <main className='bg-gray-100'>
-        <div className='mx-auto my-0 min-h-screen bg-white px-4 md:w-3/4 lg:w-[768px]'>
+      <main className='bg-gray-300'>
+        <div className='mx-auto my-0 min-h-screen bg-white md:w-3/4 lg:w-[768px]'>
           {children}
         </div>
       </main>

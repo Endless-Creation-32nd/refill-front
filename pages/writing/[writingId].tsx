@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { useRouter } from 'next/router';
+import BackButton from '../../components/BackButton';
 import Layout from '../../components/layout';
 
 const imageUrl =
@@ -13,12 +14,10 @@ const linkUrl =
 const Detail = () => {
   const router = useRouter();
 
-  const leftChild = <button onClick={() => router.back()}>&lt;</button>;
-
   return (
     <>
-      <Layout leftChild={leftChild} hasNav={false}>
-        <div className='flex flex-col'>
+      <Layout leftChild={<BackButton />} hasNav={false}>
+        <div className='flex flex-col p-4'>
           <div className='relative h-[246px] w-[158px] self-center'>
             <Image
               src={imageUrl}
@@ -34,7 +33,7 @@ const Detail = () => {
       </Layout>
       <a
         href={linkUrl}
-        className='sticky inset-x-0 bottom-0 flex justify-center bg-black py-4 text-2xl text-mint-main'
+        className='sticky inset-x-0 bottom-0 flex justify-center bg-black py-4 text-xl font-bold text-mint-main'
       >
         상세정보 보기
       </a>

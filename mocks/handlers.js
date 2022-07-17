@@ -1,27 +1,6 @@
 import { rest } from 'msw';
 
 export const handlers = [
-  rest.get('https://my.backend/book', (req, res, ctx) => {
-    return res(
-      ctx.json({
-        title: 'Lord of the Rings',
-        imageUrl: '/book-cover.jpg',
-        description:
-          'The Lord of the Rings is an epic high-fantasy novel written by English author and scholar J. R. R. Tolkien.',
-      })
-    );
-  }),
-  rest.get('/reviews', (req, res, ctx) => {
-    return res(
-      ctx.json([
-        {
-          id: '60333292-7ca1-4361-bf38-b6b43b90cb16',
-          author: 'John Maverick',
-          text: 'Lord of The Rings, is with no absolute hesitation, my most favored and adored book by‑far. The triology is wonderful‑ and I really consider this a legendary fantasy series. It will always keep you at the edge of your seat‑ and the characters you will grow and fall in love with!',
-        },
-      ])
-    );
-  }),
   rest.get('/api/writing', (req, res, ctx) => {
     return res(
       ctx.status(200),
@@ -50,6 +29,53 @@ export const handlers = [
               '‘괴물’을 뜻하는 영어 ‘monster’의 어원은 ‘monstere’라는 동사인데, ‘보여주다’라는 뜻을 품고 있다. 보여주고 싶은 자기과시의 욕구가 과해지면 누구든 괴물로 변하고 마는 것일까. 그도 그럴 법 하다. 따져보면 여러 신화 속에 등장하는 수많은 괴물들은 나름대로 공통된 특징이 있는데, 그건 한때 빼어난 미모를 가지고 있었지만 지나치게 자만하거나 오만하여 만인이 혐오하는 괴물로 바뀌는 저주를 받았다는 점이다. 괴물은 늘 영웅에게 자기 존재를 드러내며 인정받고 싶어 한다. 그러나 가엾게도 그 보여주는 방식에 있어 괴물은 스스로도 납득할 수 없을 만큼 비타협적이고 폭력적이다. 이렇듯 괴물은 인간인 우리가 인간성을 갖춘 인간이기 위해 경계해야 할 끔찍스런 상태를 가리킨다. 즉 진정한 인간이 되려면 돌이킬 수 없는 추악한 나락으로 추락해서는 안 되는데, 그 추악한 상태가 바로 괴물이라고 저자는 말한다. 이 책에는 마법에 걸린 주인공들이 많이 나온다. ‘잠자는 숲 속의 공주’ 이야기처럼 어떤 악의 존재에 속박된 여인, 그 속박을 풀고 그녀를 진정으로 구원해줄 영웅, 그리고 그 사이에는 언제나 처단되어야 할 흉측한 괴물이 있다. 공주는 순수하고 아름다운 인간성을 대표하며, 삶이라는 모험 속에 용감하게 뛰어든 인간이라면 누구나 영웅이라고 말할 수 있다. 그리고 그 영웅이 어쩔 수 없이 만나게 되고, 반드시 넘어서야 할 인간의 혐오스러운 본성이 바로 괴물이다. 괴물은 우리의 마음속에 하나의 원형을 이루면서 현대에까지 이르고 있다. 그것은 관능이나 유혹, 속도, 두려움, 흐릿하거나 반투명한 형상들, 시공의 경계를 넘나드는 존재 등 다양한 모습으로 곳곳에서 숨을 쉬고 있다. 아직도 우리들에게 끊임없이 무언가를 보여주려고 애쓰면서 말이다.',
             linkUrl:
               'http://www.kpipa.or.kr/info/recommBookInfo.do?board_id=35&article_id=4162&book_info_id=2',
+          },
+        ],
+      })
+    );
+  }),
+  rest.get('/api/group/recomandation', (req, res, ctx) => {
+    return res(
+      ctx.status(200),
+      ctx.json({
+        status: 200,
+        message: '추천 그룹 조회 성공',
+        data: [
+          {
+            groupId: 1,
+            groupName: '그룹이름',
+            description:
+              '그룹 설명 그룹 설명 그룹 설명 그룹 설명 그룹 설명 그룹 설명 그룹 설명 그룹 설명 그룹 설명 그룹 설명',
+            tagList: ['태그', '태그'],
+            maxMember: 4,
+            currentMember: 2,
+            postCount: 3, // 인증 글 최소 갯수
+            startTime: '2022-7-10',
+            endTime: '2022-7-15',
+          },
+          {
+            groupId: 2,
+            groupName: '그룹이름',
+            description:
+              '그룹 설명 그룹 설명 그룹 설명 그룹 설명 그룹 설명 그룹 설명 그룹 설명 그룹 설명 그룹 설명 그룹 설명',
+            tagList: ['태그', '태그'],
+            maxMember: 4,
+            currentMember: 2,
+            postCount: 3, // 인증 글 최소 갯수
+            startTime: '2022-7-10',
+            endTime: '2022-7-15',
+          },
+          {
+            groupId: 3,
+            groupName: '그룹이름',
+            description:
+              '그룹 설명 그룹 설명 그룹 설명 그룹 설명 그룹 설명 그룹 설명 그룹 설명 그룹 설명 그룹 설명 그룹 설명',
+            tagList: ['태그', '태그'],
+            maxMember: 4,
+            currentMember: 2,
+            postCount: 3, // 인증 글 최소 갯수
+            startTime: '2022-7-10',
+            endTime: '2022-7-15',
           },
         ],
       })

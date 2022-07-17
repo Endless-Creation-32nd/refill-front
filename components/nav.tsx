@@ -2,8 +2,8 @@ import Link from 'next/link';
 
 const Nav = () => {
   return (
-    <nav className='sticky bottom-0 bg-white'>
-      <ul className='flex'>
+    <nav className='fixed inset-x-0 bottom-0'>
+      <ul className='flex justify-center bg-white'>
         <li className='flex-1'>
           <Link href='/home'>
             <a>홈</a>

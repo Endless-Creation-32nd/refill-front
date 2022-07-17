@@ -8,8 +8,15 @@ module.exports = {
     extend: {
       colors: {
         'mint-main': '#24D7CC',
+        'mint-sub': '#DEF8F6',
+        bgColor: '#FBFBFB',
+        'light-gray': '#E4E4E4',
       },
     },
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/forms')({
+      strategy: 'class',
+    }),
+  ],
 };

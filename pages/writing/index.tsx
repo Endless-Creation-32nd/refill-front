@@ -3,7 +3,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import Layout from '../../components/layout';
 import useSWRInfinite from 'swr/infinite';
-import fetchWriting from '../../utils/fetchWritings';
+import fetchData from '../../utils/fetchData';
+import styled from '@emotion/styled';
 
 const WRITING_LIST = ['문학', '시사﹒칼럼', '외국어', '기사', '기타'];
 
@@ -17,7 +18,7 @@ const Writing = () => {
   } = useSWRInfinite(
     (index) =>
       `/api/writing?category=${query.category}&page=${index + 1}&count=${10}`,
-    fetchWriting
+    fetchData
   );
 
   if (!writingData) {
@@ -29,8 +30,8 @@ const Writing = () => {
 
   return (
     <Layout leftChild={leftChild}>
-      <div>
-        <ul className='my-6 flex flex-wrap gap-2'>
+      <div className='relative bg-bgColor p-4'>
+        <ul className='flex flex-wrap gap-3 py-6'>
           {WRITING_LIST.map((category, index) => {
             const activeClassName =
               category === query.category
@@ -40,7 +41,7 @@ const Writing = () => {
               <li key={index}>
                 <Link href={`/writing?category=${category}`}>
                   <a
-                    className={`${activeClassName} rounded-md border-[1px] border-mint-main px-4 py-1`}
+                    className={`${activeClassName} rounded-lg border-[1px] border-mint-main px-3 py-2 text-sm`}
                   >
                     {category}
                   </a>
@@ -52,9 +53,12 @@ const Writing = () => {
         <ul className='flex flex-col gap-4'>
           {writingList.map((writingItem) => {
             return (
-              <li key={writingItem.writingId}>
+              <li
+                key={writingItem.writingId}
+                className='rounded-md bg-white shadow-md'
+              >
                 <Link href={`/writing/${writingItem.writingId}`}>
-                  <a className='relative flex max-h-[168px] gap-2 rounded-lg border-[1px] p-4'>
+                  <a className='relative flex max-h-[180px] w-full gap-2 rounded-md border p-4'>
                     <div className='relative h-[136px] w-[87px]'>
                       <Image
                         src={writingItem.imageUrl}
@@ -69,9 +73,9 @@ const Writing = () => {
                       <div className='text-sm text-[#666666]'>
                         {writingItem.author}
                       </div>
-                      <p className='mt-2 flex-1 overflow-hidden text-ellipsis text-[#666666]'>
+                      <EllipsisP className='mt-2 w-full flex-1 text-[#666666] '>
                         {writingItem.desicription}
-                      </p>
+                      </EllipsisP>
                     </div>
                     <div className='absolute top-4 right-4 rounded-md bg-mint-main px-2 py-1 text-sm text-white'>
                       {query.category}
@@ -86,5 +90,15 @@ const Writing = () => {
     </Layout>
   );
 };
+
+const EllipsisP = styled.p`
+  text-overflow: ellipsis;
+  overflow: hidden;
+  word-break: break-word;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+`;
 
 export default Writing;

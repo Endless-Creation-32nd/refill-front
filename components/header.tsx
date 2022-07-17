@@ -1,9 +1,9 @@
 import { ReactNode } from 'react';
 
 interface PropsType {
-  leftChild?: ReactNode;
-  middleChild?: ReactNode;
-  rightChild?: ReactNode;
+  leftChild?: ReactNode | JSX.Element;
+  middleChild?: ReactNode | JSX.Element;
+  rightChild?: ReactNode | JSX.Element;
 }
 const Header: React.FC<PropsType> = ({
   leftChild,
