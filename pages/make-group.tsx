@@ -5,24 +5,33 @@ import DatePicker from 'react-datepicker';
 import dayjs from 'dayjs';
 import BackButton from '../components/BackButton';
 
+interface FormType {
+  groupName: string;
+  introduction: string;
+  tagList: string[];
+  maxMember: number;
+  dateRange: (Date | null)[];
+  perWeek: number;
+  penalty: boolean;
+}
 const MakeGroup = () => {
   const initialState = {
     groupName: '',
     introduction: '',
     tagList: [],
     maxMember: 2,
-    dateRange: [null, null],
+    dateRange: [new Date(), new Date()],
     perWeek: 1,
     penalty: false,
   };
-  const [form, setForm] = useState(initialState);
+  const [form, setForm] = useState<FormType>(initialState);
   const [startDate, endDate] = form.dateRange;
 
   const router = useRouter();
 
-  const onSubmit = (e) => {
-    e.preventDefault();
-  };
+  // const onSubmit = (e) => {
+  //   e.preventDefault();
+  // };
 
   const goBack = () => {
     router.back();
