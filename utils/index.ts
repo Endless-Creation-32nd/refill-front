@@ -1,2 +1,2 @@
-export * from './errorType';
+export * from './errorTypes';
 export * from './fetchData';

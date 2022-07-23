@@ -18,7 +18,7 @@ const MainPage: NextPage = () => {
           <h1 className='text-3xl font-extrabold'>Refill</h1>
           <div className='text-xl'>
             <p>
-              안녕하세요 <span className='text-mint-main'>알로하</span>님,
+              안녕하세요 <span className='text-mint-main'>USER NAME</span>님,
             </p>
             <p>오늘도 필사해볼까요?</p>
           </div>
