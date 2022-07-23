@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.5/dist/web/static/pretendard-dynamic-subset.css");
+
 html,
 body {
   padding: 0;
@@ -18,6 +20,7 @@ a {
 * {
   box-sizing: border-box;
   word-break: keep-all;
+  font-family: Pretendard;
 }
 
 .react-datepicker__input-container input {
