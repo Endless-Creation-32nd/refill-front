@@ -11,6 +11,8 @@ module.exports = {
         'mint-sub': '#DEF8F6',
         bgColor: '#FBFBFB',
         'light-gray': '#E4E4E4',
+        'middle-gray': '#939393',
+        warning: '#FF0000',
       },
     },
   },
