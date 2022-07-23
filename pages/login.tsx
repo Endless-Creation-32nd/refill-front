@@ -68,7 +68,6 @@ const Login: NextPage = () => {
         const {
           data: { data },
         } = response;
-        console.log(response);
         if (response.status === 200) {
           localStorage.setItem('accessToken', data.accessToken);
           router.replace('/');

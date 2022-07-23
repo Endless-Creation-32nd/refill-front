@@ -25,8 +25,11 @@ const Layout = ({
   const router = useRouter();
 
   const refreshToken = async () => {
+    const accessToken = localStorage.getItem('accessToken');
     try {
-      const accessToken = localStorage.getItem('accessToken');
+      if (!accessToken) {
+        router.replace('/login');
+      }
       const response = await axios.get('/api/auth/refresh', {
         data: { accessToken },
       });
@@ -41,23 +44,20 @@ const Layout = ({
           const { errorType } = error.response.data;
           if (
             errorType === errorTypes.INVALID_INPUT ||
-            errorType === errorTypes.AUTHENTICATION_FAIL
+            errorType === errorTypes.AUTHENTICATION_FAIL ||
+            errorType === errorTypes.NOT_LOGIN_MEMBER ||
+            errorType === errorTypes.INVALID_MEMBER
           ) {
             router.replace('/login');
           }
-          // throw new Error(errorType);
         }
-        // console.log(error);
       }
     }
   };
 
   if (error) {
     const { message } = error;
-    if (
-      message === errorTypes.AUTHENTICATION_FAIL ||
-      message === errorTypes.INVALID_INPUT
-    ) {
+    if (message === errorTypes.AUTHENTICATION_FAIL) {
       refreshToken();
     }
   }

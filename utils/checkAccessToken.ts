@@ -2,8 +2,11 @@ import axios, { AxiosError } from 'axios';
 import { errorTypes } from './errorTypes';
 
 export const checkAccessToken = async (url: string) => {
+  const accessToken = localStorage.getItem('accessToken');
   try {
-    const accessToken = localStorage.getItem('accessToken');
+    if (!accessToken) {
+      throw new Error(errorTypes.AUTHENTICATION_FAIL);
+    }
     const config = {
       headers: { Authorization: `Bearer ${accessToken}` },
     };
@@ -18,7 +21,8 @@ export const checkAccessToken = async (url: string) => {
         const { errorType } = error.response.data;
         throw new Error(errorType);
       }
+    } else {
+      throw new Error((error as Error).message);
     }
-    throw new Error(errorTypes.UNHANDLED_ERROR);
   }
 };
