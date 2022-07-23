@@ -62,20 +62,6 @@ const Layout = ({
     }
   }
 
-  return (
-    <>
-      <Header
-        leftChild={leftChild}
-        middleChild={middleChild}
-        rightChild={rightChild}
-      />
-      <main className='bg-gray-300'>
-        <div className='mx-auto my-0 min-h-screen bg-white md:w-3/4 lg:w-[768px]'>
-          {children}
-        </div>
-      </main>
-      {hasNav && <Nav />}
-    </>
-  );
+  return <>{children}</>;
 };
 export default Layout;
