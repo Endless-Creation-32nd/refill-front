@@ -10,7 +10,7 @@ const Header: React.FC<PropsType> = ({
   leftChild,
   middleChild,
   rightChild,
-  style,
+  style = '',
 }) => {
   return (
     <header className={`common-header ${style}`}>

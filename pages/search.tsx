@@ -7,7 +7,7 @@ import fetchData from '../utils/fetchData';
 
 const Search = () => {
   const { data: groupData } = useSWR<IGroup[]>(
-    '/api/group/recomandation',
+    '/api/group/recommendation',
     fetchData
   );
   const rightChild = <input className='flex-4 rounded-md bg-gray-400' />;
