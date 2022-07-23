@@ -14,7 +14,7 @@ const Signup: NextPageWithLayout = () => {
   const { form, setForm } = context;
   const [isDuplicatedNickname, setIsDuplicatedNickname] = useState(false);
   const [isDuplicatedEmail, setIsDuplicatedEmail] = useState(false);
-  const [isValidEmail, setIsValideEmail] = useState(false);
+  const [isValidEmail, setIsValidEmail] = useState(false);
   const [isValidNickname, setValidNickname] = useState(false);
   const [isSamePassword, setIsSamePassword] = useState(true);
   const [isValidPassword, setIsValidPassword] = useState(true);
@@ -35,10 +35,10 @@ const Signup: NextPageWithLayout = () => {
     onChange(e);
 
     if (!value.match(/^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/)) {
-      setIsValideEmail(false);
+      setIsValidEmail(false);
       return;
     }
-    setIsValideEmail(true);
+    setIsValidEmail(true);
   };
   const onChangeNickname = (e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
@@ -120,6 +120,9 @@ const Signup: NextPageWithLayout = () => {
       return;
     }
 
+    setIsDuplicatedEmail(false);
+    setIsDuplicatedNickname(false);
+
     axios
       .get(
         encodeURI(
@@ -156,7 +159,7 @@ const Signup: NextPageWithLayout = () => {
             value={form.email}
             onChange={onChangeEmail}
             placeholder='이메일을 입력해 주세요.'
-            className='rounded-md border border-light-gray p-4'
+            className='rounded-md border border-light-gray px-4 py-3 text-sm'
           />
           <p className='mt-2 h-6 text-xs text-warning'>
             {isDuplicatedEmail && '이미 사용중인 이메일입니다.'}
@@ -172,7 +175,7 @@ const Signup: NextPageWithLayout = () => {
             value={form.password}
             onChange={onChangePassWord}
             placeholder='비밀번호를 입력해 주세요.'
-            className='mb-4 rounded-md border border-light-gray p-4'
+            className='rounded-md border border-light-gray px-4 py-3 text-sm'
           />
           <input
             id='passwordConfirm'
@@ -182,7 +185,7 @@ const Signup: NextPageWithLayout = () => {
             value={form.passwordConfirm}
             onChange={onChangePasswordConfirm}
             placeholder='비밀번호를 확인해 주세요.'
-            className='rounded-md border border-light-gray p-4'
+            className='mt-2 rounded-md border border-light-gray px-4 py-3 text-sm'
           />
           <p className='mt-2 h-6 text-xs text-warning'>
             {!isSamePassword && '비밀번호가 일치하지 않습니다.'}
@@ -198,7 +201,7 @@ const Signup: NextPageWithLayout = () => {
             value={form.nickname}
             onChange={onChangeNickname}
             placeholder='최소 2글자에서 8글자로 입력해주세요.'
-            className='rounded-md border border-light-gray p-4'
+            className='rounded-md border border-light-gray px-4 py-3 text-sm'
           />
           <p className='mt-2 h-6 text-xs'>
             <span className='text-mint-main'>
@@ -211,13 +214,15 @@ const Signup: NextPageWithLayout = () => {
             </span>
           </p>
         </label>
-        <button
-          type='submit'
-          onClick={onClickNextStep}
-          className='w-full rounded-md bg-black py-4 text-lg text-mint-main'
-        >
-          다음 단계
-        </button>
+        <div className='flex flex-1 items-end'>
+          <button
+            type='submit'
+            onClick={onClickNextStep}
+            className='h-12 w-full rounded-md bg-black py-3 text-lg text-mint-main'
+          >
+            다음 단계
+          </button>
+        </div>
       </form>
     </>
   );

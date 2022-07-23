@@ -1,4 +1,4 @@
-import { ReactElement, useContext } from 'react';
+import { ReactElement, useContext, useState } from 'react';
 import SignupLayout from '../components/signup-layout';
 import { SignupFormContext } from '../libs/SignupFormContext';
 import type { SignupFormContextType } from '../libs/SignupFormContext';
@@ -19,16 +19,53 @@ const KEYWORD_LIST = [
 ];
 
 const Keyword = () => {
+  const [selectedKeyword, setSelectedKeyword] = useState<{
+    [key: string]: boolean;
+  }>({});
   const context = useContext(SignupFormContext) as SignupFormContextType;
   const { form, setForm } = context;
   const router = useRouter();
 
   const onAddKeyword = (keyword: string) => {
-    console.log(form.tagList, keyword);
-    setForm((prev) => ({
-      ...prev,
-      tagList: prev.tagList.concat(keyword),
-    }));
+    const { tagList } = form;
+    if (
+      (!(keyword in selectedKeyword) || !selectedKeyword[keyword]) &&
+      tagList.length >= 5
+    ) {
+      alert('1개 이상 5개 이하의 키워드를 설정해주세요!');
+      return;
+    }
+
+    if (!(keyword in selectedKeyword)) {
+      setSelectedKeyword((prev) => ({
+        ...prev,
+        [keyword]: true,
+      }));
+      setForm((prev) => ({
+        ...prev,
+        tagList: prev.tagList.concat(keyword),
+      }));
+    } else {
+      if (selectedKeyword[keyword]) {
+        setSelectedKeyword((prev) => ({
+          ...prev,
+          [keyword]: false,
+        }));
+        setForm((prev) => ({
+          ...prev,
+          tagList: prev.tagList.filter((tag) => tag !== keyword),
+        }));
+      } else {
+        setSelectedKeyword((prev) => ({
+          ...prev,
+          [keyword]: true,
+        }));
+        setForm((prev) => ({
+          ...prev,
+          tagList: prev.tagList.concat(keyword),
+        }));
+      }
+    }
   };
 
   const onSubmit = () => {
@@ -66,12 +103,21 @@ const Keyword = () => {
       });
   };
   return (
-    <>
-      <p>관심있는 키워드를 선택해주세요.</p>
-      <ul className='flex flex-wrap'>
+    <div className='flex h-full w-full flex-col p-6'>
+      <p className='mb-12 text-xl'>
+        관심있는 <span className='text-mint-main'>키워드</span>를 선택해주세요.
+      </p>
+      <ul className='flex flex-wrap gap-3'>
         {KEYWORD_LIST.map((keyword, index) => {
           return (
-            <li key={index} className='cursor-pointer'>
+            <li
+              key={index}
+              className={`cursor-pointer rounded-md border py-1 px-3 text-xl ${
+                selectedKeyword[keyword]
+                  ? 'border-black bg-black text-mint-main'
+                  : 'border-light-gray bg-white text-light-gray'
+              }`}
+            >
               <button type='button' onClick={() => onAddKeyword(keyword)}>
                 # {keyword}
               </button>
@@ -79,8 +125,15 @@ const Keyword = () => {
           );
         })}
       </ul>
-      <button onClick={onSubmit}>가입완료</button>
-    </>
+      <div className='flex flex-1 items-end'>
+        <button
+          onClick={onSubmit}
+          className='h-12 w-full rounded-md bg-black py-3 text-lg text-mint-main'
+        >
+          가입완료
+        </button>
+      </div>
+    </div>
   );
 };
 Keyword.getLayout = function getLayout(page: ReactElement) {
