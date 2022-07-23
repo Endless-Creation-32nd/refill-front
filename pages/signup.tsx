@@ -145,9 +145,9 @@ const Signup: NextPageWithLayout = () => {
   };
   return (
     <>
-      <form className='flex flex-col p-6'>
+      <form className='relative flex h-full flex-col p-6'>
         <label htmlFor='email' className='flex flex-col'>
-          <span>이메일</span>
+          <span className='mb-2 font-bold text-mint-main'>이메일</span>
           <input
             id='email'
             type='email'
@@ -156,11 +156,14 @@ const Signup: NextPageWithLayout = () => {
             value={form.email}
             onChange={onChangeEmail}
             placeholder='이메일을 입력해 주세요.'
+            className='rounded-md border border-light-gray p-4'
           />
-          {isDuplicatedEmail && <p>이미 사용중인 이메일입니다.</p>}
+          <p className='mt-2 h-6 text-xs text-warning'>
+            {isDuplicatedEmail && '이미 사용중인 이메일입니다.'}
+          </p>
         </label>
-        <label htmlFor='password' className='flex flex-col'>
-          <span>비밀번호</span>
+        <label htmlFor='password' className='mb-5 flex flex-col'>
+          <span className='mb-2 font-bold text-mint-main'>비밀번호</span>
           <input
             id='password'
             type='password'
@@ -169,6 +172,7 @@ const Signup: NextPageWithLayout = () => {
             value={form.password}
             onChange={onChangePassWord}
             placeholder='비밀번호를 입력해 주세요.'
+            className='mb-4 rounded-md border border-light-gray p-4'
           />
           <input
             id='passwordConfirm'
@@ -178,11 +182,14 @@ const Signup: NextPageWithLayout = () => {
             value={form.passwordConfirm}
             onChange={onChangePasswordConfirm}
             placeholder='비밀번호를 확인해 주세요.'
+            className='rounded-md border border-light-gray p-4'
           />
-          {!isSamePassword && <p>비밀번호가 일치하지 않습니다.</p>}
+          <p className='mt-2 h-6 text-xs text-warning'>
+            {!isSamePassword && '비밀번호가 일치하지 않습니다.'}
+          </p>
         </label>
         <label htmlFor='nickname' className='flex flex-col'>
-          <span>닉네임</span>
+          <span className='mb-2 font-bold text-mint-main'>닉네임</span>
           <input
             id='nickname'
             type='text'
@@ -191,13 +198,24 @@ const Signup: NextPageWithLayout = () => {
             value={form.nickname}
             onChange={onChangeNickname}
             placeholder='최소 2글자에서 8글자로 입력해주세요.'
+            className='rounded-md border border-light-gray p-4'
           />
-          {isValidNickname && !isDuplicatedNickname && (
-            <p>사용가능한 닉네임입니다.</p>
-          )}
-          {isDuplicatedNickname && <p>이미 사용 중인 닉네임입니다.</p>}
+          <p className='mt-2 h-6 text-xs'>
+            <span className='text-mint-main'>
+              {isValidNickname &&
+                !isDuplicatedNickname &&
+                '사용가능한 닉네임입니다.'}
+            </span>
+            <span className='text-warning'>
+              {isDuplicatedNickname && '이미 사용 중인 닉네임입니다.'}
+            </span>
+          </p>
         </label>
-        <button type='submit' onClick={onClickNextStep}>
+        <button
+          type='submit'
+          onClick={onClickNextStep}
+          className='w-full rounded-md bg-black py-4 text-lg text-mint-main'
+        >
           다음 단계
         </button>
       </form>
