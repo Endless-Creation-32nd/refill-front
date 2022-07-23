@@ -5,7 +5,7 @@ const Nav = () => {
     <nav className='fixed inset-x-0 bottom-0'>
       <ul className='flex justify-center bg-white'>
         <li className='flex-1'>
-          <Link href='/home'>
+          <Link href='/'>
             <a>홈</a>
           </Link>
         </li>

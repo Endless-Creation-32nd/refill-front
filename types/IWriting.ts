@@ -3,6 +3,6 @@ export interface IWriting {
   title: string;
   imageUrl: string;
   author: string;
-  desicription: string;
+  description: string;
   linkUrl: string;
 }

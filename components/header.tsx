@@ -4,14 +4,16 @@ interface PropsType {
   leftChild?: ReactNode | JSX.Element;
   middleChild?: ReactNode | JSX.Element;
   rightChild?: ReactNode | JSX.Element;
+  style?: string;
 }
 const Header: React.FC<PropsType> = ({
   leftChild,
   middleChild,
   rightChild,
+  style,
 }) => {
   return (
-    <header className='sticky top-0 left-0 z-[99] flex h-16 w-full items-center justify-between bg-white px-4'>
+    <header className={`common-header ${style}`}>
       <div id='left-child' className='flex flex-1 justify-start'>
         {leftChild || <></>}
       </div>
