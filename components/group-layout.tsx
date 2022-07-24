@@ -1,8 +1,8 @@
 import { PropsWithChildren } from 'react';
 import Layout from './layout';
 
-const WritingLayout = ({ children }: PropsWithChildren) => {
+const GroupLayout = ({ children }: PropsWithChildren) => {
   return <Layout>{children}</Layout>;
 };
 
-export default WritingLayout;
+export default GroupLayout;

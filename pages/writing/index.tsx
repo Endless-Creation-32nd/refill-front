@@ -4,14 +4,28 @@ import { useRouter } from 'next/router';
 import useSWRInfinite from 'swr/infinite';
 import fetchData from '../../utils/fetchData';
 import styled from '@emotion/styled';
-import { ReactElement, UIEvent, useContext, useRef } from 'react';
+import { ReactElement, UIEvent, useRef } from 'react';
 import WritingLayout from '../../components/writing-layout';
 import Head from 'next/head';
 import Header from '../../components/header';
 import { IWriting } from '../../types/IWriting';
-import { WRITING_LIST } from '../../utils/commons';
-import { WritingContext } from '../../libs/WritingContext';
+// import { WRITING_LIST } from '../../utils/commons';
 import Nav from '../../components/nav';
+
+const LITERATURE = 'LITERATURE';
+const COLUMN = 'COLUMN';
+const FOREIGN = 'FOREIGN';
+const ARTICLE = 'ARTICLE';
+const OTHER = 'OTHER';
+
+const WRITING_LIST = {
+  문학: LITERATURE,
+  '시사﹒칼럼': COLUMN,
+  외국어: FOREIGN,
+  기사: ARTICLE,
+  기타: OTHER,
+};
+type categoryType = '문학' | '시사﹒칼럼' | '외국어' | '기사' | '기타';
 
 const Writing = () => {
   const router = useRouter();
@@ -24,19 +38,13 @@ const Writing = () => {
     (index) =>
       query.category &&
       `/api/writing?category=${
-        WRITING_LIST[query.category]
+        WRITING_LIST[query.category as categoryType]
       }&page=${index}&count=${5}`,
     fetchData
   );
-  const context = useContext(WritingContext);
 
   const onClickBookDescription = (writingItem: IWriting) => {
-    if (!context) return;
-    const { setWriting } = context;
-    setWriting((prev) => ({
-      ...prev,
-      ...writingItem,
-    }));
+    localStorage.setItem('writingItem', JSON.stringify(writingItem));
     router.push(`/writing/${writingItem.writingId}`);
   };
 
@@ -53,7 +61,7 @@ const Writing = () => {
             <ul className='mb-6 flex flex-wrap gap-2'>
               {Object.entries(WRITING_LIST).map((category, index) => {
                 const activeClassName =
-                  category[1] === query.category
+                  category[0] === query.category
                     ? 'bg-mint-main text-white'
                     : 'bg-white text-mint-main';
                 return (
@@ -61,7 +69,7 @@ const Writing = () => {
                     key={index}
                     className={`${activeClassName} rounded-lg border border-mint-main px-3 py-2 text-sm`}
                   >
-                    <Link href={`/writing?category=${category[1]}`}>
+                    <Link href={`/writing?category=${category[0]}`}>
                       <a>{category[0]}</a>
                     </Link>
                   </li>

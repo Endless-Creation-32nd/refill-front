@@ -1,11 +1,15 @@
 export interface IGroup {
   groupId: string;
-  groupName: string;
+  name: string;
   description: string;
-  tagList: string[];
+  penalty: boolean;
   maxMember: number;
-  currentMember: number;
-  postCount: number;
+  adminId: string;
+  perWeek: string;
   startTime: string;
   endTime: string;
+  tagList: string[];
+  currentMemberCount: number;
+  createdAt: string;
+  updatedAt: string;
 }
