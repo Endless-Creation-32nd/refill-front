@@ -1,0 +1,27 @@
+name: New Feature
+description: 새로운 기능을 구현합니다.
+title: "[Feat]: "
+labels: ["🌈 feature"]
+assignees: @ojj1123
+  - 
+body:
+  - type: markdown
+    attributes:
+      value: |
+        새로운 기능 구현에 대한 이슈입니다.
+  - type: textarea
+    id: description
+    attributes:
+      label: 기능설명
+      description: 왜 이런 기능을 넣으려는지 설명합니다.
+      placeholder: 설명
+    validations:
+      required: false
+  - type: textarea
+    id: tasks
+    attributes:
+      label: 작업사항
+      description: 구현기능을 나열하고, 어떻게 구현할지 등을 자세하게 설명합니다.
+      placeholder: 설명
+    validations:
+      required: false
