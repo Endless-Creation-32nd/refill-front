@@ -3,7 +3,7 @@ interface IMember {
   nickname: string;
   image: string | null;
 }
-export interface IMyGroup {
+export interface IGroupDetail {
   groupId: number;
   name: string;
   description: string;
