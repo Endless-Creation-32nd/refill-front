@@ -20,8 +20,8 @@ const Detail = () => {
       <Head>
         <title>글감 - {writing?.title}</title>
       </Head>
-      <main className='bg-gray-100'>
-        <div className='common-layout bg-white'>
+      <main className='main bg-white'>
+        <div className='bg-white pt-16'>
           {writing && (
             <>
               <div className='flex flex-col p-4'>
@@ -41,7 +41,7 @@ const Detail = () => {
               </div>
               <a
                 href={writing?.linkUrl}
-                className='sticky inset-x-0 bottom-0 flex justify-center bg-black py-4 text-xl font-bold text-mint-main'
+                className='fixed inset-x-0 bottom-0 flex justify-center bg-black py-4 text-xl font-bold text-mint-main'
               >
                 상세정보 보기
               </a>

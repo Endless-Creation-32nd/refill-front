@@ -134,8 +134,8 @@ const MakeGroup = () => {
         rightChild={rightChild}
         style={'bg-white'}
       />
-      <main className='bg-gray-200'>
-        <div className='common-layout bg-white'>
+      <main className='main bg-white'>
+        <div className='bg-white pt-16'>
           <form className='flex flex-col gap-4 p-6'>
             <label htmlFor='group-name' className='w-full'>
               <span>그룹이름</span>

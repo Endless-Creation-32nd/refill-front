@@ -9,7 +9,6 @@ import WritingLayout from '../../components/writing-layout';
 import Head from 'next/head';
 import Header from '../../components/header';
 import { IWriting } from '../../types/IWriting';
-// import { WRITING_LIST } from '../../utils/commons';
 import Nav from '../../components/nav';
 
 const LITERATURE = 'LITERATURE';
@@ -53,11 +52,11 @@ const Writing = () => {
   return (
     <>
       <Head>
-        <title>글감</title>
+        <title>글감 - {query.category}</title>
       </Head>
-      <main className='bg-gray-100'>
-        <div className='common-layout bg-bgColor' onScroll={onScroll}>
-          <div className='relative p-4'>
+      <main className='main bg-bgColor'>
+        <div className='bg-bgColor pt-16' onScroll={onScroll}>
+          <div className='relative p-6'>
             <ul className='mb-6 flex flex-wrap gap-2'>
               {Object.entries(WRITING_LIST).map((category, index) => {
                 const activeClassName =
@@ -101,7 +100,7 @@ const Writing = () => {
                             className='rounded-md'
                           />
                         </div>
-                        <div className='flex flex-1 flex-col gap-2'>
+                        <div className='flex flex-1 flex-col gap-2 text-left'>
                           <h1 className='flex'>
                             <BookTitle className='flex-1 text-lg font-bold'>
                               {writingItem.title}
@@ -150,6 +149,8 @@ const EllipsisP = styled.p`
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
+
+  text-indent: 0.5rem;
 `;
 
 const BookTitle = styled.div`
