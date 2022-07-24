@@ -15,6 +15,7 @@ import fetchData from '../../utils/fetchData';
 import { IGroupDetail } from '../../types/IMyGroup';
 import axios from 'axios';
 import { errorTypes } from '../../utils';
+import Head from 'next/head';
 
 const GroupDetail = () => {
   const router = useRouter();
@@ -42,6 +43,8 @@ const GroupDetail = () => {
         } = error.response;
         if (errorType === errorTypes.AUTHORIZATION_FAIL) {
           alert('2개 이상의 그룹에 가입할 수 없습니다.');
+        } else if (errorType === errorTypes.ALREADY_PARTICIPATE_GROUP) {
+          alert('이미 가입한 그룹입니다.');
         }
       });
   };
@@ -63,6 +66,9 @@ const GroupDetail = () => {
   } = groupDetailData;
   return (
     <>
+      <Head>
+        <title>그룹 - {name}</title>
+      </Head>
       <div className='bg-white p-6'>
         <h3 className='mb-4 text-xl font-semibold'>{name}</h3>
         <ul className='mb-2 flex flex-wrap gap-2'>
@@ -90,7 +96,7 @@ const GroupDetail = () => {
             <span className='text-xs text-middle-gray'>주 {perWeek}회</span>
           </li>
           <li className='flex items-center gap-2'>
-            <Period />
+            <Period width={20} height={20} />
             <span className='text-xs text-middle-gray'>
               {dayjs(startTime).format('YYYY.MM.DD')} -{' '}
               {dayjs(endTime).format('YYYY.MM.DD')}
@@ -143,7 +149,7 @@ const GroupDetail = () => {
       <button
         type='button'
         onClick={onParticipation}
-        className='fixed inset-x-0 bottom-0 flex justify-center bg-black py-4 text-xl font-bold text-mint-main'
+        className='fixed inset-x-0 bottom-0 bg-black py-4 text-xl font-bold text-mint-main'
       >
         그룹 신청하기
       </button>
@@ -161,8 +167,8 @@ GroupDetail.getLayout = function getLayout(page: ReactElement) {
         middleChild={middleChild}
         style={'bg-white'}
       />
-      <main className='bg-gray-200'>
-        <div className='common-layout bg-bgColor'>{page}</div>
+      <main className='main bg-white'>
+        <div className='bg-white pt-16'>{page}</div>
       </main>
     </GroupLayout>
   );

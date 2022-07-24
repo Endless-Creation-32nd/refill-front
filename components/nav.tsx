@@ -48,7 +48,7 @@ const navData = [
 const Nav = () => {
   const router = useRouter();
   return (
-    <nav className='sticky inset-x-0 bottom-0 h-[72px] bg-white shadow-xl'>
+    <nav className='fixed inset-x-0 bottom-0 h-[72px] bg-white shadow-xl'>
       <ul className='flex h-full justify-center'>
         {navData.map((nav) => {
           return (

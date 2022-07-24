@@ -46,7 +46,7 @@ const GroupItem: React.FC<Props> = ({ group }) => {
               </span>
             </li>
             <li className='flex items-center gap-1'>
-              <Period />
+              <Period width={20} height={20} />
               <span className='text-xs text-middle-gray'>
                 {dayjs(group.startTime).format('YY.MM.DD')}-
                 {dayjs(group.endTime).format('YY.MM.DD')}
