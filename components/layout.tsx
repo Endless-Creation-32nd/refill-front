@@ -30,13 +30,13 @@ const Layout = ({
       if (!accessToken) {
         router.replace('/login');
       }
-      const response = await axios.get('/api/auth/refresh', {
-        data: { accessToken },
+      const response = await axios.post('/api/auth/refresh', {
+        accessToken,
       });
       const {
         data: { data },
       } = response;
-
+      console.log(response);
       localStorage.setItem('accessToken', data.accessToken);
     } catch (error) {
       if (error instanceof AxiosError) {

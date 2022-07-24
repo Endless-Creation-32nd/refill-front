@@ -18,7 +18,7 @@ const GroupMain = () => {
   const router = useRouter();
 
   return (
-    <div className='flex h-full flex-col p-6'>
+    <div className='h-full p-6'>
       <div className='mt-4 rounded-lg bg-gradient-to-br from-[#212121] to-[#434343] p-4'>
         <h3 className='text-lg font-thin text-white'>
           원하는 <span className='font-bold'>그룹</span>을 찾아보세요!

@@ -124,7 +124,7 @@ const GroupDetail = () => {
           </li>
         </ul>
       </div>
-      <span className='sticky inset-x-0 flex justify-center bg-black py-4 text-xl font-bold text-mint-main'>
+      <span className='sticky inset-x-0 bottom-0 flex justify-center bg-black py-4 text-xl font-bold text-mint-main'>
         그룹 신청하기
       </span>
     </>
