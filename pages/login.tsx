@@ -90,7 +90,7 @@ const Login: NextPage = () => {
   };
 
   return (
-    <div className='flex h-full w-full flex-col items-center p-6'>
+    <div className='flex h-full w-full flex-col items-center bg-white p-6'>
       <div className='relative z-10 mt-36 mb-[81px] h-[35px] w-[112px]'>
         <Image
           src='/images/logo_mint.png'

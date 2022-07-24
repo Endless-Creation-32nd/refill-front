@@ -27,8 +27,8 @@ const SignupLayout = ({
       </Head>
       <SignupFormContext.Provider value={{ form, setForm }}>
         <SignupHeader middleChild={middleChild} />
-        <main className='bg-gray-200'>
-          <div className='common-layout bg-white'>{children}</div>
+        <main className='main h-[1px] bg-white'>
+          <div className='h-full bg-white pt-16'>{children}</div>
         </main>
       </SignupFormContext.Provider>
     </>
