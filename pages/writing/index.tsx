@@ -100,7 +100,7 @@ const Writing = () => {
                             className='rounded-md'
                           />
                         </div>
-                        <div className='flex flex-1 flex-col gap-2'>
+                        <div className='flex flex-1 flex-col gap-2 text-left'>
                           <h1 className='flex'>
                             <BookTitle className='flex-1 text-lg font-bold'>
                               {writingItem.title}
@@ -149,6 +149,8 @@ const EllipsisP = styled.p`
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
+
+  text-indent: 0.5rem;
 `;
 
 const BookTitle = styled.div`
