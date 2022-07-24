@@ -94,10 +94,13 @@ const MakeGroup = () => {
   const onSubmit = (e: FormEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
+    const accessToken = localStorage.getItem('accessToken');
     axios
-      .post('/api/group', form)
+      .post('/api/group', form, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      })
       .then((response) => {
-        if (response.status === 201) {
+        if (response.status === 200) {
           router.replace('/group');
         }
       })

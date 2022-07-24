@@ -36,7 +36,6 @@ const Layout = ({
       const {
         data: { data },
       } = response;
-      console.log(response);
       localStorage.setItem('accessToken', data.accessToken);
     } catch (error) {
       if (error instanceof AxiosError) {

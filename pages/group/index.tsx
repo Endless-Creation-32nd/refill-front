@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { ReactElement } from 'react';
@@ -9,7 +10,9 @@ import Header from '../../components/header';
 import Nav from '../../components/nav';
 import { IGroup } from '../../types/IGroup';
 import fetchData from '../../utils/fetchData';
+import SmallCharacters from '../../assets/small_characters.svg';
 
+const TAG_LIST = ['취준', '문학', '취미'];
 const GroupMain = () => {
   const { data: groupData } = useSWR<IGroup[]>(
     '/api/group/recommendation',
@@ -20,11 +23,28 @@ const GroupMain = () => {
   return (
     <div className='h-full p-6'>
       <div className='mt-4 rounded-lg bg-gradient-to-br from-[#212121] to-[#434343] p-4'>
-        <h3 className='text-lg font-thin text-white'>
-          원하는 <span className='font-bold'>그룹</span>을 찾아보세요!
-        </h3>
+        <div className='flex justify-between'>
+          <div>
+            <h3 className='text-lg font-thin text-white'>
+              원하는 <span className='font-bold'>그룹</span>을 찾아보세요!
+            </h3>
+            <ul className='flex gap-2'>
+              {TAG_LIST.map((tag, index) => {
+                return (
+                  <li
+                    key={index}
+                    className='rounded-[4px] bg-mint-main px-2 py-1 text-xs'
+                  >
+                    # {tag}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+          <SmallCharacters />
+        </div>
         <button
-          className='flex w-full rounded-lg bg-white p-2'
+          className='mt-2 flex w-full rounded-lg bg-white p-2'
           onClick={() => router.push('/search')}
         >
           <div>

@@ -14,7 +14,7 @@ const GroupItem: React.FC<Props> = ({ group }) => {
     <Link href={`/group/${group.groupId}`}>
       <a>
         <li className='rounded-lg border bg-white p-4 shadow-sm'>
-          <ul className='flex gap-2'>
+          <ul className='flex flex-wrap gap-2'>
             {group.tagList.map((tag, index) => {
               return (
                 <li
@@ -27,7 +27,7 @@ const GroupItem: React.FC<Props> = ({ group }) => {
             })}
           </ul>
           <div className='mt-3'>
-            <span className='text-sm font-bold'>{group.groupName}</span>
+            <span className='text-sm font-bold'>{group.name}</span>
             <EllipsisP className='text-xs text-middle-gray'>
               {group.description}
             </EllipsisP>
@@ -36,13 +36,13 @@ const GroupItem: React.FC<Props> = ({ group }) => {
             <li className='flex items-center gap-1'>
               <Person />
               <span className='text-xs text-middle-gray'>
-                {group.currentMember}/{group.maxMember}명
+                {group.currentMemberCount}/{group.maxMember}명
               </span>
             </li>
             <li className='flex items-center gap-1'>
               <Count />
               <span className='text-xs text-middle-gray'>
-                주 {group.postCount}회
+                주 {group.perWeek}회
               </span>
             </li>
             <li className='flex items-center gap-1'>

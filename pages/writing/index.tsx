@@ -25,6 +25,7 @@ const WRITING_LIST = {
   기사: ARTICLE,
   기타: OTHER,
 };
+type categoryType = '문학' | '시사﹒칼럼' | '외국어' | '기사' | '기타';
 
 const Writing = () => {
   const router = useRouter();
@@ -37,7 +38,7 @@ const Writing = () => {
     (index) =>
       query.category &&
       `/api/writing?category=${
-        WRITING_LIST[query.category as string]
+        WRITING_LIST[query.category as categoryType]
       }&page=${index}&count=${5}`,
     fetchData
   );
