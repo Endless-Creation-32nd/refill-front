@@ -2,7 +2,7 @@ name: New Feature
 description: 새로운 기능을 구현합니다.
 title: "[Feat]: "
 labels: ["🌈 feature"]
-assignees: @ojj1123
+assignees: ojj1123
   - 
 body:
   - type: markdown
