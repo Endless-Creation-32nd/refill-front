@@ -13,7 +13,7 @@ import ActiveMypage from '../assets/nav_mypage_active.svg';
 const navData = [
   {
     id: 'nav100',
-    name: 'home',
+    name: '홈',
     path: '/',
     query: {},
     icon: <Home />,
@@ -21,7 +21,7 @@ const navData = [
   },
   {
     id: 'nav200',
-    name: 'writing',
+    name: '글감',
     path: '/writing',
     query: { category: '문학' },
     icon: <Writing />,
@@ -29,7 +29,7 @@ const navData = [
   },
   {
     id: 'nav300',
-    name: 'group',
+    name: '그룹',
     path: '/group',
     query: {},
     icon: <Group />,
@@ -37,7 +37,7 @@ const navData = [
   },
   {
     id: 'nav400',
-    name: 'mypage',
+    name: '마이페이지',
     path: '/mypage',
     query: {},
     icon: <Mypage />,
@@ -48,14 +48,28 @@ const navData = [
 const Nav = () => {
   const router = useRouter();
   return (
-    <nav className='sticky inset-x-0 bottom-0'>
-      <ul className='flex justify-center bg-white'>
+    <nav className='sticky inset-x-0 bottom-0 h-[72px] bg-white shadow-xl'>
+      <ul className='flex h-full justify-center'>
         {navData.map((nav) => {
           return (
-            <li key={nav.id} className='flex-1'>
+            <li
+              key={nav.id}
+              className='flex flex-1 items-center justify-center'
+            >
               <Link href={{ pathname: nav.path, query: nav.query }}>
-                <a>
-                  {nav.path === router.pathname ? nav.activeIcon : nav.icon}
+                <a className='flex flex-col items-center'>
+                  <span>
+                    {nav.path === router.pathname ? nav.activeIcon : nav.icon}
+                  </span>
+                  <span
+                    className={`text-[10px] ${
+                      nav.path === router.pathname
+                        ? 'text-black'
+                        : 'text-[#e4e4e4]'
+                    }`}
+                  >
+                    {nav.name}
+                  </span>
                 </a>
               </Link>
             </li>

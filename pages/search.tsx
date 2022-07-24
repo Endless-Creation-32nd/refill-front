@@ -10,30 +10,30 @@ import Person from '../assets/search_person.svg';
 import Period from '../assets/search_period.svg';
 import Count from '../assets/search_count.svg';
 import Penalty from '../assets/search_penalty.svg';
+import SearchHeader from '../components/search-header';
 
 const Search = () => {
   const { data: groupData } = useSWR<IGroup[]>(
     '/api/group/recommendation',
     fetchData
   );
-  const rightChild = <input className='flex-4 rounded-md bg-gray-400' />;
   return (
     <>
-      <div className='bg-white p-6'>
-        <ul className='flex justify-between justify-self-center rounded-lg border border-light-gray p-3 text-sm'>
-          <li className='flex flex-1 items-center gap-2 text-center'>
+      <div className='bg-white px-6 pb-6'>
+        <ul className='flex h-full justify-between justify-self-center rounded-lg border border-light-gray p-3 text-sm'>
+          <li className='flex flex-1 items-center justify-center gap-1 border border-white border-r-black'>
             <Person />
             <button>인원</button>
           </li>
-          <li className='flex flex-1 items-center gap-2 text-center'>
+          <li className='flex flex-1 items-center justify-center gap-1 border border-white border-r-black'>
             <Period />
             <button>기간</button>
           </li>
-          <li className='flex flex-1 items-center gap-2 text-center'>
+          <li className='flex flex-1 items-center justify-center gap-1 border border-white border-r-black'>
             <Count />
             <button>횟수</button>
           </li>
-          <li className='flex flex-1 items-center gap-2 text-center'>
+          <li className='flex flex-1 items-center justify-center gap-1'>
             <Penalty />
             <button>패널티</button>
           </li>
@@ -56,7 +56,7 @@ const Search = () => {
 Search.getLayout = function getLayout(page: ReactElement) {
   return (
     <GroupLayout>
-      <Header leftChild={<BackButton />} style={'bg-white'} />
+      <SearchHeader />
       <main className='bg-gray-200'>
         <div className='common-layout bg-bgColor'>{page}</div>
       </main>
