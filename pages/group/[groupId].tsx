@@ -1,5 +1,7 @@
 import dayjs from 'dayjs';
 import { ReactElement } from 'react';
+import Image from 'next/image';
+import { useRouter } from 'next/router';
 import BackButton from '../../components/BackButton';
 import GroupLayout from '../../components/group-layout';
 import Header from '../../components/header';
@@ -7,12 +9,16 @@ import Person from '../../assets/group_person.svg';
 import Count from '../../assets/group_count.svg';
 import Period from '../../assets/group_period.svg';
 import Warning from '../../assets/group_warn.svg';
-import Image from 'next/image';
+import useSWR from 'swr';
+import { checkAccessToken } from '../../utils/checkAccessToken';
 
 const profileUrl =
   'http://www.kpipa.or.kr/upload/book/KP0062/1384146696326_4110.jpg';
 
 const GroupDetail = () => {
+  const { data, error } = useSWR('/api/auth', checkAccessToken);
+  const router = useRouter();
+  const { query } = router;
   return (
     <>
       <div className='bg-white p-6'>
