@@ -5,6 +5,7 @@ import type { SignupFormContextType } from '../libs/SignupFormContext';
 import axios from 'axios';
 import { errorTypes } from '../utils';
 import { useRouter } from 'next/router';
+import { axiosPublic } from '../utils/axiosPublic';
 
 const KEYWORD_LIST = [
   '문학',
@@ -70,12 +71,26 @@ const Keyword = () => {
 
   const onSubmit = () => {
     const { email, password, nickname, tagList } = form;
+    if (
+      !email ||
+      !email.trim() ||
+      !password ||
+      !password.trim() ||
+      !nickname ||
+      !nickname.trim()
+    ) {
+      alert('기존 입력값을 다시 입력해주세요.');
+      setForm({ ...form, tagList: [] });
+      router.replace('/signup');
+      return;
+    }
+
     if (tagList.length < 1 || tagList.length > 5) {
       alert('1개 이상 5개 이하의 키워드를 설정해주세요!');
       return;
     }
 
-    axios
+    axiosPublic
       .post('/api/member', { email, password, nickname, tagList })
       .then((response) => {
         if (response.status === 201) {
@@ -95,9 +110,11 @@ const Keyword = () => {
         const {
           data: { errorType },
         } = error.response;
-        if (errorType === errorTypes.INVALID_INPUT) {
-          alert('기존 입력값이 초기화 되었습니다.');
-          setForm({ ...form, tagList: [] });
+        if (errorType === errorTypes.E021) {
+          alert('이미 사용중인 이메일입니다.');
+          router.replace('/signup');
+        } else if (errorType === errorTypes.E020) {
+          alert('이미 사용중인 닉네임입니다.');
           router.replace('/signup');
         }
       });

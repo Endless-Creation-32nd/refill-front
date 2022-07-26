@@ -1,8 +1,11 @@
+import axios from 'axios';
 import dayjs from 'dayjs';
-import { ReactElement } from 'react';
-import Avatar from 'react-avatar';
+import Head from 'next/head';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
+import { ReactElement, useEffect, useState } from 'react';
+import Avatar from 'react-avatar';
+import useSWR from 'swr';
 import BackButton from '../../components/BackButton';
 import GroupLayout from '../../components/group-layout';
 import Header from '../../components/header';
@@ -10,20 +13,51 @@ import Person from '../../assets/group_person.svg';
 import Count from '../../assets/group_count.svg';
 import Period from '../../assets/group_period.svg';
 import Warning from '../../assets/group_warn.svg';
-import useSWR from 'swr';
 import fetchData from '../../utils/fetchData';
-import { IGroupDetail } from '../../types/IMyGroup';
-import axios from 'axios';
 import { errorTypes } from '../../utils';
-import Head from 'next/head';
+import { IGroup } from '../../types/IGroup';
+import { IUser } from '../../types/IUser';
 
+const JOIN_BUTTON_STYLE = {
+  PARTICIPATE: {
+    bgColor: 'bg-mint-main',
+    textColor: 'text-black',
+  },
+  PENDING: {
+    bgColor: 'bg-mint-main',
+    textColor: 'text-black',
+  },
+  ABSENCE: {
+    bgColor: 'bg-black',
+    textColor: 'text-mint-main',
+  },
+};
 const GroupDetail = () => {
+  const { data: userData } = useSWR<IUser>('/api/auth', fetchData);
   const router = useRouter();
   const { query } = router;
-  const { data: groupDetailData } = useSWR<IGroupDetail>(
+  const { data: groupData } = useSWR<IGroup>(
     query.groupId && `/api/group/${query.groupId}`,
     fetchData
   );
+  const [participationStatus, setParticipationStatus] = useState<
+    'PARTICIPATE' | 'PENDING' | 'ABSENCE'
+  >('ABSENCE');
+
+  useEffect(() => {
+    if (!groupData || !userData) {
+      return;
+    }
+    const { participationMembers } = groupData;
+    const member = participationMembers.find(
+      (member) => userData.memberId === member.memberId
+    );
+    if (!member) {
+      setParticipationStatus('ABSENCE');
+    } else {
+      setParticipationStatus(member.status);
+    }
+  }, [groupData, userData]);
 
   const onParticipation = () => {
     const accessToken = localStorage.getItem('accessToken');
@@ -41,17 +75,18 @@ const GroupDetail = () => {
         const {
           data: { errorType },
         } = error.response;
-        if (errorType === errorTypes.AUTHORIZATION_FAIL) {
+        if (errorType === errorTypes.E024) {
           alert('2개 이상의 그룹에 가입할 수 없습니다.');
-        } else if (errorType === errorTypes.ALREADY_PARTICIPATE_GROUP) {
-          alert('이미 가입한 그룹입니다.');
+        } else if (errorType === errorTypes.E025) {
+          alert('그룹 인원이 모두 찼습니다.');
         }
       });
   };
-  if (!groupDetailData) {
+  const aa = () => {};
+
+  if (!groupData || !userData) {
     return null;
   }
-
   const {
     name,
     description,
@@ -63,7 +98,8 @@ const GroupDetail = () => {
     endTime,
     tagList,
     participationMembers,
-  } = groupDetailData;
+  } = groupData;
+
   return (
     <>
       <Head>
@@ -89,7 +125,14 @@ const GroupDetail = () => {
         <ul className='flex flex-wrap gap-2'>
           <li className='flex items-center gap-2'>
             <Person />
-            <span className='text-xs text-middle-gray'>{maxMember}명</span>
+            <span className='text-xs text-middle-gray'>
+              {
+                participationMembers.filter(
+                  (member) => member.status === 'PARTICIPATE'
+                ).length
+              }
+              /{maxMember}명
+            </span>
           </li>
           <li className='flex items-center gap-2'>
             <Count />
@@ -113,45 +156,54 @@ const GroupDetail = () => {
       <div className='p-6'>
         <h3 className='mb-4 text-xl font-semibold'>함께 하고 있는 멤버</h3>
         <ul className='grid grid-cols-3 gap-3'>
-          {participationMembers.map((member) => {
-            return (
-              <li
-                key={member.memberId}
-                className='flex flex-col items-center gap-2 rounded-lg border border-light-gray py-4 px-[14px] shadow-lg'
-              >
-                <div className='relative h-[61px] w-[61px]'>
-                  {member.memberId === adminId && (
-                    <div className='absolute -top-2 right-1/2 z-[1] translate-x-1/2 rounded-full bg-black py-[2px] px-2 text-[8px] text-mint-main'>
-                      방장
-                    </div>
-                  )}
-                  {member.image ? (
-                    <Image
-                      src={member.image}
-                      alt='프로필'
-                      objectFit='cover'
-                      layout='fill'
-                      className='rounded-full'
-                    />
-                  ) : (
-                    <Avatar name={member.nickname} size='61' round={true} />
-                  )}
-                </div>
-                <span className='text-sm font-semibold'>{member.nickname}</span>
-                <button className='rounded-[4px] bg-mint-main px-4 py-1 text-xs'>
-                  필사기록
-                </button>
-              </li>
-            );
-          })}
+          {participationMembers
+            .filter((member) => member.status === 'PARTICIPATE')
+            .map((member) => {
+              return (
+                <li
+                  key={member.memberId}
+                  className='flex flex-col items-center gap-2 rounded-lg border border-light-gray py-4 px-[14px] shadow-lg'
+                >
+                  <div className='relative h-[61px] w-[61px]'>
+                    {member.memberId === adminId && (
+                      <div className='absolute -top-2 right-1/2 z-[1] translate-x-1/2 rounded-full bg-black py-[2px] px-2 text-[8px] text-mint-main'>
+                        방장
+                      </div>
+                    )}
+                    {member.image ? (
+                      <Image
+                        src={member.image}
+                        alt='프로필'
+                        objectFit='cover'
+                        layout='fill'
+                        className='rounded-full'
+                      />
+                    ) : (
+                      <Avatar name={member.nickname} size='61' round={true} />
+                    )}
+                  </div>
+                  <span className='text-sm font-semibold'>
+                    {member.nickname}
+                  </span>
+                  <button className='rounded-[4px] bg-mint-main px-4 py-1 text-xs'>
+                    필사기록
+                  </button>
+                </li>
+              );
+            })}
         </ul>
       </div>
       <button
         type='button'
         onClick={onParticipation}
-        className='fixed inset-x-0 bottom-0 bg-black py-4 text-xl font-bold text-mint-main'
+        disabled={participationStatus !== 'ABSENCE'}
+        className={`fixed inset-x-0 bottom-0  py-4 text-xl font-bold
+        ${JOIN_BUTTON_STYLE[participationStatus].bgColor}
+        ${JOIN_BUTTON_STYLE[participationStatus].textColor}`}
       >
-        그룹 신청하기
+        {participationStatus === 'ABSENCE' && '그룹 신청하기'}
+        {participationStatus === 'PARTICIPATE' && '이미 참여중인 그룹입니다!'}
+        {participationStatus === 'PENDING' && '가입 대기중인 그룹입니다!'}
       </button>
     </>
   );

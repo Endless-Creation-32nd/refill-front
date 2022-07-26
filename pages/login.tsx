@@ -1,10 +1,10 @@
-import axios from 'axios';
 import { NextPage } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { ChangeEvent, FormEvent, useState } from 'react';
 import { errorTypes } from '../utils';
+import { axiosPublic } from '../utils/axiosPublic';
 
 const Login: NextPage = () => {
   const initialState = {
@@ -62,7 +62,7 @@ const Login: NextPage = () => {
       return;
     }
 
-    axios
+    axiosPublic
       .post('/api/auth/login', { email, password })
       .then((response) => {
         const {
@@ -77,9 +77,9 @@ const Login: NextPage = () => {
         const {
           data: { errorType },
         } = error.response;
-        if (errorType === errorTypes.NOT_FOUND_RESOURCE) {
+        if (errorType === errorTypes.E014) {
           alert('해당 사용자를 찾을 수 없습니다. 다시 시도해보세요.');
-        } else if (errorType === errorTypes.NOT_MATCH_PASSWORD) {
+        } else if (errorType === errorTypes.E022) {
           alert('비밀번호가 일치하지 않습니다. 다시 입력해주세요.');
           setForm((prev) => ({
             ...prev,
@@ -89,6 +89,10 @@ const Login: NextPage = () => {
       });
   };
 
+  // if (userData) {
+  //   router.replace('/');
+  //   return null;
+  // }
   return (
     <div className='flex h-full w-full flex-col items-center bg-white p-6'>
       <div className='relative z-10 mt-36 mb-[81px] h-[35px] w-[112px]'>
