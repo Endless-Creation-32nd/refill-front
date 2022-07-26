@@ -1,4 +1,4 @@
-interface IMember {
+export interface IMember {
   memberId: number;
   nickname: string;
   image: string | null;

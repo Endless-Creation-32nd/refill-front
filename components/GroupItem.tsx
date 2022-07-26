@@ -6,10 +6,10 @@ import Person from '../assets/group_person.svg';
 import Count from '../assets/group_count.svg';
 import Period from '../assets/group_period.svg';
 
-interface Props {
+interface PropsType {
   group: IGroup;
 }
-const GroupItem: React.FC<Props> = ({ group }) => {
+const GroupItem: React.FC<PropsType> = ({ group }) => {
   return (
     <Link href={`/group/${group.groupId}`}>
       <a>

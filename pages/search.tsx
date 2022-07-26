@@ -24,7 +24,7 @@ const Search = () => {
       <div className='bg-white px-6 pb-6'>
         <ul className='flex h-full justify-between justify-self-center rounded-lg border border-light-gray p-3 text-sm'>
           <li className='flex flex-1 items-center justify-center gap-1 border border-white border-r-black'>
-            <Person />
+            <Person width='20' height='20' fill='#1C1C1E' />
             <button>인원</button>
           </li>
           <li className='flex flex-1 items-center justify-center gap-1 border border-white border-r-black'>

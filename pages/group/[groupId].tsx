@@ -1,10 +1,8 @@
 import axios from 'axios';
 import dayjs from 'dayjs';
 import Head from 'next/head';
-import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { ReactElement, useEffect, useState } from 'react';
-import Avatar from 'react-avatar';
 import useSWR from 'swr';
 import BackButton from '../../components/BackButton';
 import GroupLayout from '../../components/group-layout';
@@ -17,6 +15,7 @@ import fetchData from '../../utils/fetchData';
 import { errorTypes } from '../../utils';
 import { IGroup } from '../../types/IGroup';
 import { IUser } from '../../types/IUser';
+import CustomAvatar from '../../components/CustomAvatar';
 
 const JOIN_BUTTON_STYLE = {
   PARTICIPATE: {
@@ -164,23 +163,18 @@ const GroupDetail = () => {
                   key={member.memberId}
                   className='flex flex-col items-center gap-2 rounded-lg border border-light-gray py-4 px-[14px] shadow-lg'
                 >
-                  <div className='relative h-[61px] w-[61px]'>
+                  <div className='relative'>
                     {member.memberId === adminId && (
                       <div className='absolute -top-2 right-1/2 z-[1] translate-x-1/2 rounded-full bg-black py-[2px] px-2 text-[8px] text-mint-main'>
                         방장
                       </div>
                     )}
-                    {member.image ? (
-                      <Image
-                        src={member.image}
-                        alt='프로필'
-                        objectFit='cover'
-                        layout='fill'
-                        className='rounded-full'
-                      />
-                    ) : (
-                      <Avatar name={member.nickname} size='61' round={true} />
-                    )}
+                    <CustomAvatar
+                      member={member}
+                      width={'w-[61px]'}
+                      height={'h-[61px]'}
+                      size={'61'}
+                    />
                   </div>
                   <span className='text-sm font-semibold'>
                     {member.nickname}
@@ -219,8 +213,8 @@ GroupDetail.getLayout = function getLayout(page: ReactElement) {
         middleChild={middleChild}
         style={'bg-white'}
       />
-      <main className='main bg-white'>
-        <div className='bg-white pt-16'>{page}</div>
+      <main className='main bg-bgColor'>
+        <div className='bg-bgColor pt-16'>{page}</div>
       </main>
     </GroupLayout>
   );
