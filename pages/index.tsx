@@ -7,7 +7,6 @@ import GroupItem from '../components/GroupItem';
 import Header from '../components/header';
 import HomeLayout from '../components/home-layout';
 import { IGroup } from '../types/IGroup';
-import { IGroupDetail } from '../types/IMyGroup';
 import fetchData from '../utils/fetchData';
 import Period from '../assets/group_period.svg';
 import Notice from '../assets/home_notice.svg';
@@ -15,12 +14,16 @@ import Character from '../assets/character.svg';
 import Head from 'next/head';
 
 const Home = () => {
-  const { data: groupData } = useSWR<IGroup[]>(
+  const { data: userData } = useSWR('/api/auth', fetchData);
+  const { data: groupData, error } = useSWR<IGroup[]>(
     '/api/group/recommendation',
     fetchData
   );
-  const { data: myGroupData } = useSWR<IGroupDetail>('/api/group', fetchData);
+  const { data: myGroupData } = useSWR<IGroup>('/api/group', fetchData);
 
+  if (!userData) {
+    return null;
+  }
   return (
     <>
       <Head>
@@ -39,7 +42,8 @@ const Home = () => {
             </h1>
             <div className='text-xl'>
               <p>
-                안녕하세요 <span className='text-mint-main'>알로하</span>님,
+                안녕하세요{' '}
+                <span className='text-mint-main'>{userData.nickname}</span>님,
               </p>
               <p>오늘도 필사해볼까요?</p>
             </div>

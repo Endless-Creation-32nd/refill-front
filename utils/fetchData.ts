@@ -1,12 +1,10 @@
 import axios from 'axios';
+import { axiosPrivate } from './axiosPrivate';
 
 const fetchData = async (url: string) => {
-  const accessToken = localStorage.getItem('accessToken');
   const {
     data: { data },
-  } = await axios.get(url, {
-    headers: { Authorization: `Bearer ${accessToken}` },
-  });
+  } = await axiosPrivate.get(url);
   return data;
 };
 

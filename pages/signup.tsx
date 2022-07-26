@@ -8,6 +8,7 @@ import axios from 'axios';
 import { useRouter } from 'next/router';
 import { errorTypes } from '../utils';
 import Header from '../components/header';
+import { axiosPublic } from '../utils/axiosPublic';
 
 const Signup: NextPageWithLayout = () => {
   const context = useContext(SignupFormContext) as SignupFormContextType;
@@ -123,7 +124,7 @@ const Signup: NextPageWithLayout = () => {
     setIsDuplicatedEmail(false);
     setIsDuplicatedNickname(false);
 
-    axios
+    axiosPublic
       .get(
         encodeURI(
           `/api/member/check?nickname=${form.nickname}&email=${form.email}`
@@ -139,9 +140,9 @@ const Signup: NextPageWithLayout = () => {
         const {
           data: { errorType },
         } = error.response;
-        if (errorType === errorTypes.DUPLICATED_EMAIL) {
+        if (errorType === errorTypes.E021) {
           setIsDuplicatedEmail(true);
-        } else if (errorType === errorTypes.DUPLICATED_NICKNAME) {
+        } else if (errorType === errorTypes.E020) {
           setIsDuplicatedNickname(true);
         }
       });

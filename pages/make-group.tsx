@@ -9,6 +9,7 @@ import Period from '../assets/group_period.svg';
 import Head from 'next/head';
 import axios from 'axios';
 import { errorTypes } from '../utils';
+import { axiosPrivate } from '../utils/axiosPrivate';
 
 const KEYWORD_LIST = [
   '문학',
@@ -94,11 +95,8 @@ const MakeGroup = () => {
   const onSubmit = (e: FormEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
-    const accessToken = localStorage.getItem('accessToken');
-    axios
-      .post('/api/group', form, {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      })
+    axiosPrivate
+      .post('/api/group', form)
       .then((response) => {
         if (response.status === 200) {
           router.replace('/group');
@@ -108,8 +106,9 @@ const MakeGroup = () => {
         const {
           data: { errorType },
         } = error.response;
-        if (errorType === errorTypes.INVALID_INPUT) {
-          alert('잘못된 값이 입력되었습니다. 입력 형식을 확인해주세요.');
+        if (errorType === errorTypes.E024) {
+          alert('2개 이상의 그룹을 만들 수 없습니다.');
+          router.back();
         }
       });
   };

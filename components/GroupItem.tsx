@@ -36,7 +36,7 @@ const GroupItem: React.FC<Props> = ({ group }) => {
             <li className='flex items-center gap-1'>
               <Person />
               <span className='text-xs text-middle-gray'>
-                {group.currentMemberCount}/{group.maxMember}명
+                {group.participationMembers.length}/{group.maxMember}명
               </span>
             </li>
             <li className='flex items-center gap-1'>
