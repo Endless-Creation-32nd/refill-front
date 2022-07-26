@@ -1,11 +1,11 @@
 import { useRouter } from 'next/router';
-import { ReactNode } from 'react';
+import { PropsWithChildren, ReactNode } from 'react';
 
 interface PropsType {
   middleChild?: ReactNode | JSX.Element;
 }
 
-const SignupHeader: React.FC<PropsType> = ({ middleChild }) => {
+const SignupHeader = ({ middleChild }: PropsWithChildren<PropsType>) => {
   const router = useRouter();
   const onClickBack = () => {
     if (

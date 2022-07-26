@@ -1,7 +1,8 @@
 import dayjs from 'dayjs';
+import Head from 'next/head';
+import Link from 'next/link';
 import Image from 'next/image';
 import { ReactElement } from 'react';
-import Avatar from 'react-avatar';
 import useSWR from 'swr';
 import GroupItem from '../components/GroupItem';
 import Header from '../components/header';
@@ -11,7 +12,7 @@ import fetchData from '../utils/fetchData';
 import Period from '../assets/group_period.svg';
 import Notice from '../assets/home_notice.svg';
 import Character from '../assets/character.svg';
-import Head from 'next/head';
+import CustomAvatar from '../components/CustomAvatar';
 
 const Home = () => {
   const { data: userData } = useSWR('/api/auth', fetchData);
@@ -91,26 +92,13 @@ const Home = () => {
                   <dd className='flex justify-end -space-x-3'>
                     {myGroupData.participationMembers.map((member) => {
                       return (
-                        <div
+                        <CustomAvatar
                           key={member.memberId}
-                          className='relative h-8 w-8 rounded-full bg-light-gray'
-                        >
-                          {member.image === null ? (
-                            <Avatar
-                              name={member.nickname}
-                              size='32'
-                              round={true}
-                            />
-                          ) : (
-                            <Image
-                              src={member.image}
-                              alt='member'
-                              objectFit='cover'
-                              layout='fill'
-                              className='rounded-full'
-                            />
-                          )}
-                        </div>
+                          member={member}
+                          width={'w-8'}
+                          height={'h-8'}
+                          size={'32'}
+                        />
                       );
                     })}
                   </dd>
@@ -128,12 +116,11 @@ const Home = () => {
                     일주일 {myGroupData.perWeek}개 업로드
                   </span>
                 </dd>
-                <button
-                  type='button'
-                  className='flex w-full justify-center rounded-lg bg-black py-2 font-semibold text-mint-main'
-                >
-                  + 필사 올리기
-                </button>
+                <Link href={`/mygroup/${myGroupData.groupId}`}>
+                  <a className='flex w-full justify-center rounded-lg bg-black py-2 font-semibold text-mint-main'>
+                    + 필사 올리기
+                  </a>
+                </Link>
               </div>
             </dl>
           )}

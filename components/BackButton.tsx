@@ -1,9 +1,9 @@
 import { useRouter } from 'next/router';
 
-const BackButton = () => {
+const BackButton = ({ style = '' }) => {
   const router = useRouter();
   return (
-    <button onClick={() => router.back()}>
+    <button onClick={() => router.back()} className={style}>
       <svg
         xmlns='http://www.w3.org/2000/svg'
         className='h-6 w-6'
