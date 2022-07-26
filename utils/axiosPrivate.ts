@@ -1,5 +1,6 @@
 import axios from 'axios';
 import {
+  AuthenticationError,
   EmptyAccessTokenError,
   RefreshTokenError,
   UserNotLoggedInError,
@@ -56,6 +57,10 @@ axios.interceptors.response.use(
       } else if (error?.response?.data?.errorType === errorTypes.E012) {
         window.location.href = '/login';
         throw new UserNotLoggedInError(error);
+      }
+    } else if (error?.response?.status === 403) {
+      if (error?.response.data?.errorType === errorTypes.E013) {
+        throw new AuthenticationError(error);
       }
     }
     return Promise.reject(error);

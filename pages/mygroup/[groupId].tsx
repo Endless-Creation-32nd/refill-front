@@ -4,6 +4,7 @@ import Link from 'next/link';
 import useSWR from 'swr';
 import { ReactElement, useState } from 'react';
 import { IGroup, IMember } from '../../types/IGroup';
+import { IUser } from '../../types/IUser';
 import BackButton from '../../components/BackButton';
 import CustomAvatar from '../../components/CustomAvatar';
 import Header from '../../components/header';
@@ -35,6 +36,7 @@ const member: IMember = {
 const TAG_LIST = ['취준', '문학', '취미'];
 
 const MyGroup = () => {
+  const { data: userData } = useSWR<IUser>('/api/auth', fetchData);
   const { data: myGroupData } = useSWR<IGroup>('/api/group', fetchData);
 
   const [showSidebar, setShowSidebar] = useState(false);
@@ -143,11 +145,13 @@ const MyGroup = () => {
         <div className='m-auto min-h-[300px] w-full px-4'>
           <h3 className='sticky top-0 z-10 flex items-center gap-2 border-b border-b-gray-300 bg-white py-4 text-xl font-semibold'>
             그룹멤버
-            <Link href={`/group/admin?groupId=${myGroupData?.groupId}`}>
-              <a>
-                <Setting />
-              </a>
-            </Link>
+            {userData?.memberId === myGroupData?.adminId && (
+              <Link href={`/group/admin?groupId=${myGroupData?.groupId}`}>
+                <a>
+                  <Setting />
+                </a>
+              </Link>
+            )}
           </h3>
           <ul className='flex flex-col gap-4 py-4'>
             {myGroupData?.participationMembers &&

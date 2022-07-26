@@ -36,7 +36,7 @@ const GroupDetail = () => {
   const router = useRouter();
   const { query } = router;
   const { data: groupData } = useSWR<IGroup>(
-    query.groupId && `/api/group/${query.groupId}`,
+    query.groupId ? `/api/group/${query.groupId}` : null,
     fetchData
   );
   const [participationStatus, setParticipationStatus] = useState<

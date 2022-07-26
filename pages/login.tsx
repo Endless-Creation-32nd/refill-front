@@ -2,7 +2,13 @@ import { NextPage } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { ChangeEvent, FormEvent, useState } from 'react';
+import {
+  ChangeEvent,
+  FormEvent,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 import { errorTypes } from '../utils';
 import { axiosPublic } from '../utils/axiosPublic';
 
@@ -13,7 +19,7 @@ const Login: NextPage = () => {
   };
   const [form, setForm] = useState(initialState);
   const [isValidEmail, setIsValidEmail] = useState(false);
-  const [isValidPassword, setIsValidPassword] = useState(true);
+  const [isValidPassword, setIsValidPassword] = useState(false);
   const router = useRouter();
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -46,8 +52,7 @@ const Login: NextPage = () => {
     }
     setIsValidPassword(true);
   };
-  const onSubmit = (e: FormEvent<HTMLButtonElement>) => {
-    e.preventDefault();
+  const onSubmit = useCallback(() => {
     const { email, password } = form;
     if (!email || !email.trim() || !password || !password.trim()) {
       alert('빈칸을 모두 입력해주세요.');
@@ -59,6 +64,7 @@ const Login: NextPage = () => {
     }
     if (!isValidPassword) {
       alert('비밀번호 형식을 확인해주세요.\n(8글자 이상 대소문자, 숫자 포함)');
+      setForm((prev) => ({ ...prev, password: '' }));
       return;
     }
 
@@ -70,6 +76,11 @@ const Login: NextPage = () => {
         } = response;
         if (response.status === 200) {
           localStorage.setItem('accessToken', data.accessToken);
+          setForm((prev) => ({
+            ...prev,
+            email: '',
+            password: '',
+          }));
           router.replace('/');
         }
       })
@@ -79,6 +90,11 @@ const Login: NextPage = () => {
         } = error.response;
         if (errorType === errorTypes.E014) {
           alert('해당 사용자를 찾을 수 없습니다. 다시 시도해보세요.');
+          setForm((prev) => ({
+            ...prev,
+            email: '',
+            password: '',
+          }));
         } else if (errorType === errorTypes.E022) {
           alert('비밀번호가 일치하지 않습니다. 다시 입력해주세요.');
           setForm((prev) => ({
@@ -87,12 +103,21 @@ const Login: NextPage = () => {
           }));
         }
       });
-  };
+  }, [form, isValidEmail, isValidPassword, router]);
 
-  // if (userData) {
-  //   router.replace('/');
-  //   return null;
-  // }
+  useEffect(() => {
+    const keyDownHandler = (e: KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        onSubmit();
+      }
+    };
+    document.addEventListener('keydown', keyDownHandler);
+    return () => {
+      document.removeEventListener('keydown', keyDownHandler);
+    };
+  }, [onSubmit]);
+
   return (
     <div className='flex h-full w-full flex-col items-center bg-white p-6'>
       <div className='relative z-10 mt-36 mb-[81px] h-[35px] w-[112px]'>
@@ -122,6 +147,7 @@ const Login: NextPage = () => {
           value={form.password}
           onChange={onChangePassWord}
           placeholder='비밀번호'
+          autoComplete='current-password'
           className='w-full rounded-md border border-light-gray px-4 py-3 text-sm'
         />
         <div className='flex w-full justify-between'>

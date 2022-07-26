@@ -99,16 +99,20 @@ export class RefreshTokenError extends ApiError {
   }
 }
 
+export class AuthorizationError extends ApiError {
+  axiosError: AxiosError;
+
+  constructor(axiosError: AxiosError<ErrorData>) {
+    super(axiosError);
+    this.name = 'AUTHORIZATION_ERROR';
+    this.axiosError = axiosError;
+  }
+}
+
 export class EmptyAccessTokenError extends Error {
   constructor() {
     super();
   }
   message = 'No access token';
   redirectUrl = '/login';
-}
-
-export class AuthorizationError extends ApiError {
-  name = 'AuthorizationError';
-
-  message = 'AuthorizationError';
 }
