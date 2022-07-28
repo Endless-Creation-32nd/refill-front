@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Avatar from 'react-avatar';
-import { IMember } from '../types/IGroup';
+import { IMember } from '../types/IMember';
 
 interface PropsType {
   member: IMember;

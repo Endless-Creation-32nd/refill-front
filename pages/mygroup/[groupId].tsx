@@ -4,8 +4,9 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import useSWR from 'swr';
 import { ReactElement, useState } from 'react';
-import { IGroup, IMember } from '../../types/IGroup';
+import { IGroup } from '../../types/IGroup';
 import { IUser } from '../../types/IUser';
+import { IMember } from '../../types/IMember';
 import BackButton from '../../components/BackButton';
 import CustomAvatar from '../../components/CustomAvatar';
 import Header from '../../components/header';
@@ -16,6 +17,7 @@ import Comment from '../../assets/comment.svg';
 import Person from '../../assets/search_person.svg';
 import Setting from '../../assets/member_setting.svg';
 import fetchData from '../../utils/fetchData';
+import { ITranscription } from '../../types/ITranscription';
 
 const transcription = {
   memberId: 3,
@@ -38,6 +40,10 @@ const member: IMember = {
 const MyGroup = () => {
   const { data: userData } = useSWR<IUser>('/api/auth', fetchData);
   const { data: myGroupData } = useSWR<IGroup>('/api/group', fetchData);
+  const { data: transcriptionData } = useSWR<ITranscription[]>(
+    '/api/',
+    fetchData
+  );
   const router = useRouter();
   const [showSidebar, setShowSidebar] = useState(false);
 

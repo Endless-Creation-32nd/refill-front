@@ -6,7 +6,7 @@ import fetchData from '../../utils/fetchData';
 import useSWR from 'swr';
 import { IMemberType } from '../../types/IMemberType';
 import CustomAvatar from '../../components/CustomAvatar';
-import { IMember } from '../../types/IGroup';
+import { IMember } from '../../types/IMember';
 import { AuthenticationError } from '../../utils/error';
 import { axiosPrivate } from '../../utils/axiosPrivate';
 
