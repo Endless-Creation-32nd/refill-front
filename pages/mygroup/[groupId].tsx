@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import useSWR from 'swr';
 import { ReactElement, useState } from 'react';
 import { IGroup, IMember } from '../../types/IGroup';
@@ -33,12 +34,11 @@ const member: IMember = {
   image: null,
   status: 'PARTICIPATE',
 };
-const TAG_LIST = ['취준', '문학', '취미'];
 
 const MyGroup = () => {
   const { data: userData } = useSWR<IUser>('/api/auth', fetchData);
   const { data: myGroupData } = useSWR<IGroup>('/api/group', fetchData);
-
+  const router = useRouter();
   const [showSidebar, setShowSidebar] = useState(false);
 
   const leftChild = (
@@ -56,6 +56,7 @@ const MyGroup = () => {
   const onCloseSidebar = () => {
     setShowSidebar(false);
   };
+  const onClickTranscription = () => {};
   return (
     <>
       <Header
@@ -135,12 +136,7 @@ const MyGroup = () => {
           </ul>
         </div>
       </main>
-      <button
-        type='button'
-        className='fixed inset-x-0 bottom-0  bg-black py-4 text-xl font-bold text-mint-main'
-      >
-        필사 올리기
-      </button>
+
       <Sidebar show={showSidebar} onCloseSidebar={onCloseSidebar}>
         <div className='m-auto min-h-[300px] w-full px-4'>
           <h3 className='sticky top-0 z-10 flex items-center gap-2 border-b border-b-gray-300 bg-white py-4 text-xl font-semibold'>
@@ -172,6 +168,13 @@ const MyGroup = () => {
           </ul>
         </div>
       </Sidebar>
+      <button
+        type='button'
+        onClick={() => router.push(`/transcription/${myGroupData?.groupId}`)}
+        className='fixed inset-x-0 bottom-0  bg-black py-4 text-xl font-bold text-mint-main'
+      >
+        필사 올리기
+      </button>
     </>
   );
 };

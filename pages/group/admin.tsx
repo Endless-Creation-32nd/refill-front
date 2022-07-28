@@ -44,6 +44,9 @@ const GroupAdmin = () => {
   );
 
   const handleApproveMember = (member: IMember) => {
+    if (!confirm(`정말로 ${member.nickname} 님의 가입을 승인하겠습니까?`)) {
+      return;
+    }
     axiosPrivate
       .get(`/api/group/admin/${query.groupId}/participation/${member.memberId}`)
       .then((response) => {
@@ -61,6 +64,9 @@ const GroupAdmin = () => {
   };
 
   const handleRefuceMember = (member: IMember) => {
+    if (!confirm(`정말로 ${member.nickname} 님을 거절하겠습니까?`)) {
+      return;
+    }
     axiosPrivate
       .delete(
         `/api/group/admin/${query.groupId}/participation/${member.memberId}`
@@ -80,6 +86,13 @@ const GroupAdmin = () => {
   };
 
   const handleKickout = (member: IMember) => {
+    if (
+      !confirm(
+        `정말로 ${member.nickname} 님을 퇴출하겠습니까?(되돌릴 수 없습니다.)`
+      )
+    ) {
+      return;
+    }
     axiosPrivate
       .delete(`/api/group/admin/${query.groupId}/member/${member.memberId}`)
       .then((response) => {
