@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import useSWRInfinite from 'swr/infinite';
 import fetchData from '../../utils/fetchData';
 import styled from '@emotion/styled';
-import { ReactElement, UIEvent, useRef } from 'react';
+import { ReactElement, UIEvent, useEffect, useRef } from 'react';
 import WritingLayout from '../../components/writing-layout';
 import Head from 'next/head';
 import Header from '../../components/header';
@@ -26,6 +26,8 @@ const WRITING_LIST = {
 };
 type categoryType = '문학' | '시사﹒칼럼' | '외국어' | '기사' | '기타';
 
+const PAGE_SIZE = 10;
+
 const Writing = () => {
   const router = useRouter();
   const { query } = router;
@@ -38,24 +40,38 @@ const Writing = () => {
       query.category &&
       `/api/writing?category=${
         WRITING_LIST[query.category as categoryType]
-      }&page=${index}&count=${5}`,
+      }&page=${index}&count=${PAGE_SIZE}`,
     fetchData
   );
+  const isEmpty = writingData?.length === 0;
+  const isReachingEnd =
+    isEmpty ||
+    (writingData && writingData[writingData.length - 1]?.length < PAGE_SIZE);
+  const scrollRef = useRef();
 
   const onClickBookDescription = (writingItem: IWriting) => {
     localStorage.setItem('writingItem', JSON.stringify(writingItem));
     router.push(`/writing/${writingItem.writingId}`);
   };
 
-  const scrollRef = useRef();
-  const onScroll = (e: UIEvent<HTMLDivElement>) => {};
+  // useEffect(() => {
+  //   function onScroll(e) {
+  //     console.log(e);
+  //   }
+  //   if (typeof window) {
+  //     document.addEventListener('scroll', onScroll);
+  //   }
+  //   return () => {
+  //     document.removeEventListener('scroll', onScroll);
+  //   };
+  // }, []);
   return (
     <>
       <Head>
         <title>글감 - {query.category}</title>
       </Head>
       <main className='main bg-bgColor'>
-        <div className='bg-bgColor pt-16' onScroll={onScroll}>
+        <div className='bg-bgColor pt-16'>
           <div className='relative p-6'>
             <ul className='mb-6 flex flex-wrap gap-2'>
               {Object.entries(WRITING_LIST).map((category, index) => {
@@ -91,15 +107,17 @@ const Writing = () => {
                         onClick={() => onClickBookDescription(writingItem)}
                         className='relative flex h-[1px] min-h-[180px] w-[1px] min-w-full gap-4 rounded-md border p-4'
                       >
-                        <div className='relative h-full w-[87px]'>
-                          <Image
-                            src={writingItem.imageUrl}
-                            alt='book'
-                            layout='fill'
-                            objectFit='cover'
-                            className='rounded-md'
-                          />
-                        </div>
+                        {writingItem.imageUrl && (
+                          <div className='relative h-full w-[87px]'>
+                            <Image
+                              src={writingItem.imageUrl}
+                              alt='book'
+                              layout='fill'
+                              objectFit='cover'
+                              className='rounded-md'
+                            />
+                          </div>
+                        )}
                         <div className='flex flex-1 flex-col gap-2 text-left'>
                           <h1 className='flex'>
                             <BookTitle className='flex-1 text-lg font-bold'>
