@@ -8,7 +8,7 @@ import { ReactElement, UIEvent, useEffect, useState } from 'react';
 import { IGroup } from '../../types/IGroup';
 import { IUser } from '../../types/IUser';
 import { IMember } from '../../types/IMember';
-import { ITranscription } from '../../types/ITranscription';
+import { IGroupTranscription } from '../../types/IGroupTranscription';
 
 import BackButton from '../../components/BackButton';
 import CustomAvatar from '../../components/CustomAvatar';
@@ -39,7 +39,7 @@ const MyGroup = () => {
     data: transcriptionData,
     size,
     setSize,
-  } = useSWRInfinite<ITranscription[]>(
+  } = useSWRInfinite<IGroupTranscription[]>(
     (index) =>
       myGroupData
         ? `/api/group/${myGroupData.groupId}/transcription?page=${index}&count=${PAGE_SIZE}`
@@ -108,7 +108,8 @@ const MyGroup = () => {
                 <li key={transcription.transcriptionId} className='mb-5'>
                   <div className='flex items-center gap-2'>
                     <CustomAvatar
-                      member={member}
+                      image={member.image}
+                      nickname={member.nickname}
                       width={'w-8'}
                       height={'h-8'}
                       size={'32'}
@@ -169,7 +170,8 @@ const MyGroup = () => {
                 return (
                   <li key={member.memberId} className='flex items-center gap-2'>
                     <CustomAvatar
-                      member={member}
+                      image={member.image}
+                      nickname={member.nickname}
                       width={'w-8'}
                       height={'h-8'}
                       size={'32'}
@@ -184,7 +186,7 @@ const MyGroup = () => {
       </Sidebar>
       <button
         type='button'
-        onClick={() => router.push(`/transcription/${myGroupData?.groupId}`)}
+        onClick={() => router.push(`/write/${myGroupData?.groupId}`)}
         className='fixed inset-x-0 bottom-0  bg-black py-4 text-xl font-bold text-mint-main'
       >
         필사 올리기

@@ -4,15 +4,18 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ReactElement } from 'react';
 import useSWR from 'swr';
+import fetchData from '../utils/fetchData';
+
 import GroupItem from '../components/GroupItem';
 import Header from '../components/header';
 import HomeLayout from '../components/home-layout';
+import CustomAvatar from '../components/CustomAvatar';
+
 import { IGroup } from '../types/IGroup';
-import fetchData from '../utils/fetchData';
+
 import Period from '../assets/group_period.svg';
 import Notice from '../assets/home_notice.svg';
 import Character from '../assets/character.svg';
-import CustomAvatar from '../components/CustomAvatar';
 
 const Home = () => {
   const { data: userData } = useSWR('/api/auth', fetchData);
@@ -94,7 +97,8 @@ const Home = () => {
                       return (
                         <CustomAvatar
                           key={member.memberId}
-                          member={member}
+                          image={member.image}
+                          nickname={member.nickname}
                           width={'w-8'}
                           height={'h-8'}
                           size={'32'}

@@ -11,7 +11,6 @@ import Layout from '../../components/layout';
 import Modal from '../../components/modal';
 import Loading from '../../components/loading';
 
-import { IWord } from '../../types/IWord';
 import { IWordItem } from '../../types/IWordItem';
 import { axiosPrivate } from '../../utils/axiosPrivate';
 import { errorTypes } from '../../utils';
@@ -21,6 +20,13 @@ interface IForm {
   author: string;
   original: string;
   file: File | undefined;
+}
+
+interface Word {
+  word: string;
+  definition: string;
+  pos: string | '';
+  cat: string | '';
 }
 
 export const fetchWords = async (url: string) => {
@@ -49,7 +55,7 @@ const TranscriptionForm = () => {
   const [showToggleWordModal, setShowToggleWordModal] = useState(false);
 
   const [selectedWord, setSelectedWord] = useState<IWordItem | null>(null);
-  const [wordList, setWordList] = useState<IWord[]>([]);
+  const [wordList, setWordList] = useState<Word[]>([]);
 
   const router = useRouter();
   const { query } = router;

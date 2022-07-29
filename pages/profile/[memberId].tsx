@@ -1,23 +1,22 @@
-import { useRouter } from 'next/router';
 import { ReactElement } from 'react';
+import { useRouter } from 'next/router';
+import Link from 'next/link';
+import Image from 'next/image';
 import useSWR from 'swr';
 import useSWRInfinite from 'swr/infinite';
 
-import fetchData from '../utils/fetchData';
-import { axiosPrivate } from '../utils/axiosPrivate';
-import { errorTypes } from '../utils';
+import fetchData from '../../utils/fetchData';
+import { axiosPrivate } from '../../utils/axiosPrivate';
+import { errorTypes } from '../../utils';
 
-import CustomAvatar from '../components/CustomAvatar';
-import Header from '../components/header';
-import Layout from '../components/layout';
-import Nav from '../components/nav';
+import CustomAvatar from '../../components/CustomAvatar';
+import Header from '../../components/header';
+import Layout from '../../components/layout';
 
-import { IProfile } from '../types/IProfile';
-import { IUser } from '../types/IUser';
+import { IProfile } from '../../types/IProfile';
 
-import Character from '../assets/character.svg';
-import Link from 'next/link';
-import Image from 'next/image';
+import Character from '../../assets/character.svg';
+import BackButton from '../../components/BackButton';
 
 interface Transcription {
   transcriptionId: number;
@@ -26,10 +25,12 @@ interface Transcription {
 
 const PAGE_SIZE = 10;
 
-const Mypage = () => {
-  const { data: userData } = useSWR<IUser>('/api/auth', fetchData);
+const ProfilePage = () => {
+  const router = useRouter();
+  const { query } = router;
+
   const { data: profileData } = useSWR<IProfile>(
-    userData ? `/api/member/${userData.memberId}` : null,
+    query.memberId ? `/api/member/${query.memberId}` : null,
     fetchData
   );
   const {
@@ -39,28 +40,11 @@ const Mypage = () => {
     setSize,
   } = useSWRInfinite<Transcription[]>(
     (index) =>
-      userData
-        ? `/api/member/${userData.memberId}/transcription?page=${index}&count=${PAGE_SIZE}`
+      query.memberId
+        ? `/api/member/${query.memberId}/transcription?page=${index}&count=${PAGE_SIZE}`
         : null,
     fetchData
   );
-  const router = useRouter();
-
-  const onLogout = () => {
-    axiosPrivate
-      .get('/api/auth/logout')
-      .then((response) => {
-        if (response.status === 200) {
-          localStorage.removeItem('accessToken');
-          router.replace('/login');
-        }
-      })
-      .catch((error) => {
-        if (error.errorType === errorTypes.E012) {
-          router.replace('/login');
-        }
-      });
-  };
 
   const transcriptions = transcriptionData
     ? ([] as Transcription[]).concat(...transcriptionData)
@@ -161,22 +145,18 @@ const Mypage = () => {
             })}
         </ul>
       </section>
-      <button onClick={onLogout}>logout</button>
     </div>
   );
 };
 
-Mypage.getLayout = function getLayout(page: ReactElement) {
-  const leftChild = <h1 className='tab-title'>마이페이지</h1>;
-
+ProfilePage.getLayout = function getLayout(page: ReactElement) {
   return (
     <Layout>
-      <Header leftChild={leftChild} style={'bg-white'} />
+      <Header leftChild={<BackButton />} style={'bg-white'} />
       <main className='main bg-bgColor'>
         <div className='bg-bgColor pt-16'>{page}</div>
       </main>
-      <Nav />
     </Layout>
   );
 };
-export default Mypage;
+export default ProfilePage;

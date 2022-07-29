@@ -1,6 +1,6 @@
 import { IMember } from './IMember';
 
-export interface ITranscription {
+export interface IGroupTranscription {
   transcriptionId: number;
   transcriptionImage: string;
   title: string;

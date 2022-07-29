@@ -16,6 +16,7 @@ import { errorTypes } from '../../utils';
 import { IGroup } from '../../types/IGroup';
 import { IUser } from '../../types/IUser';
 import CustomAvatar from '../../components/CustomAvatar';
+import Link from 'next/link';
 
 const JOIN_BUTTON_STYLE = {
   PARTICIPATE: {
@@ -170,7 +171,8 @@ const GroupDetail = () => {
                       </div>
                     )}
                     <CustomAvatar
-                      member={member}
+                      image={member.image}
+                      nickname={member.nickname}
                       width={'w-[61px]'}
                       height={'h-[61px]'}
                       size={'61'}
@@ -179,9 +181,17 @@ const GroupDetail = () => {
                   <span className='text-sm font-semibold'>
                     {member.nickname}
                   </span>
-                  <button className='rounded-[4px] bg-mint-main px-4 py-1 text-xs'>
-                    필사기록
-                  </button>
+                  <Link
+                    href={`${
+                      userData.memberId !== member.memberId
+                        ? `/profile/${member.memberId}`
+                        : `/mypage`
+                    }`}
+                  >
+                    <a className='rounded-[4px] bg-mint-main px-4 py-1 text-xs'>
+                      필사기록
+                    </a>
+                  </Link>
                 </li>
               );
             })}

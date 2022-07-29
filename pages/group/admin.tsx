@@ -136,7 +136,8 @@ const GroupAdmin = () => {
                         className='flex items-center gap-4 py-1'
                       >
                         <CustomAvatar
-                          member={member}
+                          image={member.image}
+                          nickname={member.nickname}
                           width={'w-8'}
                           height={'h-8'}
                           size={'32'}
@@ -180,7 +181,8 @@ const GroupAdmin = () => {
                         className='flex items-center gap-4 rounded-lg border p-3 shadow-sm'
                       >
                         <CustomAvatar
-                          member={member}
+                          image={member.image}
+                          nickname={member.nickname}
                           width={'w-[45px]'}
                           height={'h-[45px]'}
                           size={'45'}
