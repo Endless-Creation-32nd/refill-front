@@ -4,10 +4,9 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import useSWR from 'swr';
 import useSWRInfinite from 'swr/infinite';
-import { ReactElement, UIEvent, useEffect, useState } from 'react';
+import { ReactElement, useState } from 'react';
 import { IGroup } from '../../types/IGroup';
 import { IUser } from '../../types/IUser';
-import { IMember } from '../../types/IMember';
 import { IGroupTranscription } from '../../types/IGroupTranscription';
 
 import BackButton from '../../components/BackButton';
@@ -169,8 +168,15 @@ const MyGroup = () => {
                       height={'h-8'}
                       size={'32'}
                     />
-                    <div className='flex-1'>{member.nickname}</div>
-                    <span>{member.nickname}</span>
+                    <div className='flex-1 text-sm'>{member.nickname}</div>
+                    {member.memberId === myGroupData?.adminId && (
+                      <span className='text-xs text-mint-main'>방장</span>
+                    )}
+                    {member.penaltyCount !== 0 && (
+                      <span className='text-xs text-warning'>
+                        패널티 {member.penaltyCount}회
+                      </span>
+                    )}
                   </li>
                 );
               })}

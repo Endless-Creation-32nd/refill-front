@@ -3,4 +3,5 @@ export interface IMember {
   nickname: string;
   image: string | null;
   status: 'PARTICIPATE' | 'PENDING';
+  penaltyCount: number | null;
 }

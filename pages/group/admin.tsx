@@ -1,47 +1,49 @@
+import useSWR from 'swr';
+import { useRouter } from 'next/router';
+
 import BackButton from '../../components/BackButton';
 import Header from '../../components/header';
-import Person from '../../assets/search_person.svg';
-import { useRouter } from 'next/router';
-import fetchData from '../../utils/fetchData';
-import useSWR from 'swr';
-import { IMemberType } from '../../types/IMemberType';
 import CustomAvatar from '../../components/CustomAvatar';
-import { IMember } from '../../types/IMember';
+
+import fetchData from '../../utils/fetchData';
+import { errorTypes } from '../../utils';
 import { AuthenticationError } from '../../utils/error';
 import { axiosPrivate } from '../../utils/axiosPrivate';
 
-const member: IMember = {
-  memberId: 4,
-  nickname: '오정진',
-  image: null,
-  status: 'PARTICIPATE',
-};
+import { IGroup } from '../../types/IGroup';
+import { IMember } from '../../types/IMember';
+
+import Person from '../../assets/search_person.svg';
+
+interface DetailMember extends IMember {
+  lastWeekRemainActivity: number;
+}
+
+interface MemberTypes {
+  pendingMembers: IMember[];
+  participateMembers: DetailMember[];
+}
 
 const GroupAdmin = () => {
+  const { data: myGroupData } = useSWR<IGroup>('/api/group', fetchData);
+
   const router = useRouter();
   const { query } = router;
   const {
     data: memberData,
     mutate: mutateMemberData,
     error,
-  } = useSWR<IMemberType>(
+  } = useSWR<MemberTypes>(
     query.groupId ? `/api/group/admin/${query.groupId}/members` : null,
     fetchData
   );
+
   if (error) {
     if (error instanceof AuthenticationError) {
-      router.back();
       alert(error.message);
+      router.back();
     }
   }
-  const leftChild = (
-    <button className='z-50 flex cursor-pointer items-center'>
-      <span className='pt-1 text-xl font-thin'>
-        {memberData?.participateMembers.length}
-      </span>
-      <Person width='24' height='24' fill='#000000' />
-    </button>
-  );
 
   const handleApproveMember = (member: IMember) => {
     if (!confirm(`정말로 ${member.nickname} 님의 가입을 승인하겠습니까?`)) {
@@ -56,9 +58,14 @@ const GroupAdmin = () => {
         }
       })
       .catch((error) => {
+        const {
+          data: { errorType },
+        } = error.response;
         if (error instanceof AuthenticationError) {
           router.back();
           alert(error.message);
+        } else if (errorType === errorTypes.E025) {
+          alert('그룹 제한 인원을 초과하였습니다.');
         }
       });
   };
@@ -86,6 +93,10 @@ const GroupAdmin = () => {
   };
 
   const handleKickout = (member: IMember) => {
+    if (myGroupData?.adminId === member.memberId) {
+      alert('그룹장을 퇴출할 수 없습니다.');
+      return;
+    }
     if (
       !confirm(
         `정말로 ${member.nickname} 님을 퇴출하겠습니까?(되돌릴 수 없습니다.)`
@@ -108,6 +119,72 @@ const GroupAdmin = () => {
         }
       });
   };
+
+  const givePenalty = (member: DetailMember) => {
+    if (member.lastWeekRemainActivity === 0) {
+      alert('지난 주에 모든 필사 인증을 하여 패널티를 부여할 수 없습니다.');
+      return;
+    }
+    if (myGroupData?.adminId === member.memberId) {
+      alert('그룹장에게 패널티를 줄 수 없습니다.');
+      return;
+    }
+    axiosPrivate
+      .post(`/api/group/admin/${query.groupId}/penalty/${member.memberId}`)
+      .then((response) => {
+        alert(`${member.nickname}님에게 패널티가 부여되었습니다.`);
+        mutateMemberData();
+      })
+      .catch((error) => {
+        const {
+          data: { errorType },
+        } = error.response;
+        if (error instanceof AuthenticationError) {
+          router.back();
+          alert('패널티를 줄 권한이 없습니다.');
+        } else if (errorType === errorTypes.E029) {
+          alert('그룹당 한 유저에게 최대 3회의 패널티를 부여할 수 있습니다.');
+        } else if (errorType === errorTypes.E030) {
+          alert(
+            '지난 주에 모든 필사인증을 완수하여 패널티를 부여할 수 없습니다.'
+          );
+        }
+      });
+  };
+
+  const cancelPenalty = (member: DetailMember) => {
+    if (member.penaltyCount === 0) {
+      alert('패널티가 없습니다.');
+      return;
+    }
+
+    axiosPrivate
+      .delete(`/api/group/admin/${query.groupId}/penalty/${member.memberId}`)
+      .then((response) => {
+        alert(`${member.nickname}님의 패널티를 취소하였습니다.`);
+        mutateMemberData();
+      })
+      .catch((error) => {
+        const {
+          data: { errorType },
+        } = error.response;
+        if (error instanceof AuthenticationError) {
+          router.back();
+          alert('패널티를 줄 권한이 없습니다.');
+        } else if (errorType === errorTypes.E029) {
+          alert('해당 유저는 패널티가 없습니다.');
+        }
+      });
+  };
+  const leftChild = (
+    <button className='z-50 flex cursor-pointer items-center'>
+      <span className='pt-1 text-xl font-thin'>
+        {memberData?.participateMembers.length}
+      </span>
+      <Person width='24' height='24' fill='#000000' />
+    </button>
+  );
+
   return (
     <>
       <Header
@@ -168,9 +245,7 @@ const GroupAdmin = () => {
             <ul className='flex flex-col gap-3'>
               {memberData?.participateMembers.length === 0 ? (
                 <>
-                  <p className='text-sm text-black'>
-                    그룹에 새로 가입한 멤버가 없습니다.
-                  </p>
+                  <p className='text-sm text-black'>그룹 멤버가 없습니다.</p>
                 </>
               ) : (
                 <>
@@ -178,7 +253,7 @@ const GroupAdmin = () => {
                     return (
                       <li
                         key={member.memberId}
-                        className='flex items-center gap-4 rounded-lg border p-3 shadow-sm'
+                        className='flex items-center gap-4 rounded-lg border bg-white p-3 shadow-sm'
                       >
                         <CustomAvatar
                           image={member.image}
@@ -191,17 +266,38 @@ const GroupAdmin = () => {
                           <div className='flex items-center gap-2'>
                             <span className='text-sm'>{member.nickname}</span>
                             <span className='text-xs text-warning'>
-                              패널티 누적 1회
+                              {member.penaltyCount !== 0 &&
+                                `패널티 누적 ${member.penaltyCount}회`}
                             </span>
                           </div>
                           <p className='text-xs text-[#494949]'>
-                            지난주 미진행 필사 횟수 0회
+                            지난주 미진행 필사 횟수{' '}
+                            {member.lastWeekRemainActivity}회
                           </p>
                           <div className='flex gap-2'>
-                            <button className='flex-1 rounded-[4px] bg-mint-main py-1 text-xs text-white shadow-md'>
+                            <button
+                              onClick={() => givePenalty(member)}
+                              disabled={member.lastWeekRemainActivity === 0}
+                              className={`flex-1 rounded-[4px] py-1 text-xs shadow-md
+                              ${
+                                member.lastWeekRemainActivity === 0
+                                  ? 'cursor-not-allowed bg-light-gray text-white'
+                                  : 'bg-mint-main text-white'
+                              }`}
+                            >
                               패널티
                             </button>
-                            <button className='flex-1 rounded-[4px] bg-light-gray py-1 text-xs text-white shadow-md'>
+                            <button
+                              onClick={() => cancelPenalty(member)}
+                              disabled={member.penaltyCount === 0}
+                              className={`flex-1 rounded-[4px] bg-light-gray py-1
+                               text-xs text-white shadow-md
+                               ${
+                                 member.penaltyCount === 0
+                                   ? 'cursor-not-allowed'
+                                   : ''
+                               }`}
+                            >
                               패널티 취소
                             </button>
                             <button

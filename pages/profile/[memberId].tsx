@@ -6,8 +6,6 @@ import useSWR from 'swr';
 import useSWRInfinite from 'swr/infinite';
 
 import fetchData from '../../utils/fetchData';
-import { axiosPrivate } from '../../utils/axiosPrivate';
-import { errorTypes } from '../../utils';
 
 import CustomAvatar from '../../components/CustomAvatar';
 import Header from '../../components/header';
