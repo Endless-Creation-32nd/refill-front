@@ -161,6 +161,11 @@ const Mypage = () => {
             })}
         </ul>
       </section>
+      <Link href={`/write?p=${userData?.memberId}`}>
+        <a className='fixed bottom-20 right-1/2 translate-x-1/2 rounded-lg bg-black px-4 py-1 text-white'>
+          내 필사 올리기
+        </a>
+      </Link>
       <button onClick={onLogout}>logout</button>
     </div>
   );

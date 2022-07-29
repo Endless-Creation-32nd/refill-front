@@ -2,13 +2,7 @@ import { NextPage } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import {
-  ChangeEvent,
-  FormEvent,
-  useCallback,
-  useEffect,
-  useState,
-} from 'react';
+import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import { errorTypes } from '../utils';
 import { axiosPublic } from '../utils/axiosPublic';
 
@@ -133,6 +127,7 @@ const Login: NextPage = () => {
           id='email'
           type='email'
           name='email'
+          autoComplete='username'
           required
           value={form.email}
           onChange={onChangeEmail}

@@ -1,32 +1,27 @@
+import dayjs from 'dayjs';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import {
-  ChangeEvent,
-  FormEvent,
-  ReactElement,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { ChangeEvent, FormEvent, ReactElement, useState } from 'react';
 import useSWR from 'swr';
-import Sheet, { SheetRef } from 'react-modal-sheet';
+import Sheet from 'react-modal-sheet';
 
 import { IUser } from '../../types/IUser';
 import { IProfile } from '../../types/IProfile';
 import { IUserTranslation } from '../../types/IUserTranscription';
 
+import { errorTypes } from '../../utils';
+import fetchData from '../../utils/fetchData';
+import { axiosPrivate } from '../../utils/axiosPrivate';
+
 import BackButton from '../../components/BackButton';
 import Header from '../../components/header';
 import Layout from '../../components/layout';
 import Loading from '../../components/loading';
+import CustomAvatar from '../../components/CustomAvatar';
 
 import Bookmark from '../../assets/bookmark.svg';
+import FillBookmark from '../../assets/bookmark_fill.svg';
 import Comment from '../../assets/comment.svg';
-
-import fetchData from '../../utils/fetchData';
-import CustomAvatar from '../../components/CustomAvatar';
-import { axiosPrivate } from '../../utils/axiosPrivate';
-import dayjs from 'dayjs';
 
 const TranscriptionDetail = () => {
   const { data: userData } = useSWR<IUser>('/api/auth', fetchData);
@@ -46,9 +41,20 @@ const TranscriptionDetail = () => {
       : null,
     fetchData
   );
+  const [openComment, setOpenComment] = useState(false);
+
   const [comment, setComment] = useState('');
 
-  const [openComment, setOpenComment] = useState(false);
+  if (error) {
+    return null;
+  }
+  if (!transcriptionItem) {
+    return (
+      <div className='m-auto flex justify-center'>
+        <Loading />
+      </div>
+    );
+  }
 
   const onOpen = () => {
     setOpenComment(true);
@@ -65,6 +71,7 @@ const TranscriptionDetail = () => {
     e.preventDefault();
     if (!query.transcriptionId) {
       alert('유효하지 않은 필사 입니다.');
+      router.replace('/');
       return;
     }
     if (!comment || !comment.trim()) {
@@ -85,16 +92,34 @@ const TranscriptionDetail = () => {
       .catch((error) => {});
   };
 
-  const isLoading = !transcriptionItem && !error;
+  const onClickBookMark = () => {
+    if (!query.transcriptionId) {
+      alert('유효하지 않은 필사 입니다.');
+      router.replace('/');
+      return;
+    }
+    if (transcriptionItem.isBookMark) {
+      alert('이미 북마크에 저장하였습니다.');
+      return;
+    }
+    axiosPrivate
+      .post(`/api/transcription/${query.transcriptionId}/bookmark`)
+      .then((response) => {
+        mutateTranscription();
+      })
+      .catch((error) => {
+        const {
+          data: { errorType },
+        } = error.response;
+        if (errorType === errorTypes.E027) {
+          alert('이미 북마크에 저장되어 있습니다.');
+        }
+      });
+  };
 
   return (
     <>
       <div className='flex flex-col px-6'>
-        {isLoading && (
-          <div className='m-auto flex justify-center'>
-            <Loading />
-          </div>
-        )}
         {transcriptionItem && (
           <>
             <div className='relative h-[328px] w-full rounded-lg border'>
@@ -124,12 +149,16 @@ const TranscriptionDetail = () => {
                     </a>
                   )}
                 </div>
-                <div className='flex gap-3'>
+                <div className='flex h-max'>
                   <button onClick={onOpen}>
                     <Comment />
                   </button>
-                  <button>
-                    <Bookmark />
+                  <button onClick={onClickBookMark}>
+                    {transcriptionItem.isBookMark ? (
+                      <FillBookmark></FillBookmark>
+                    ) : (
+                      <Bookmark />
+                    )}
                   </button>
                 </div>
               </div>
@@ -137,7 +166,7 @@ const TranscriptionDetail = () => {
               {transcriptionItem.wordList.map((word) => {
                 return (
                   <div key={word.wordId} className='py-4'>
-                    <div className='mb-2 w-min rounded-[4px] bg-black py-[2px] px-1 text-xs font-semibold text-mint-main'>
+                    <div className='mb-2 w-max rounded-[4px] bg-black py-[2px] px-1 text-xs font-semibold text-mint-main'>
                       {word.word}
                     </div>
                     <div className='indent-2 text-sm'>
@@ -158,7 +187,7 @@ const TranscriptionDetail = () => {
               <Sheet.Container>
                 <Sheet.Header />
                 <Sheet.Content>
-                  <div className='flex h-full flex-col overflow-auto'>
+                  <div className='h-full overflow-auto pb-[81px]'>
                     <ul className='divide-y border'>
                       {transcriptionItem.commentList.map((commentItem) => {
                         return (
@@ -192,7 +221,7 @@ const TranscriptionDetail = () => {
                     </ul>
                     <form
                       onSubmit={onSubmitComment}
-                      className='sticky inset-x-0 bottom-0 flex items-center gap-4 border-t bg-white py-5 px-6'
+                      className='fixed inset-x-0 bottom-0 flex items-center gap-4 border-t bg-white py-5 px-6'
                     >
                       <label htmlFor='comment'>
                         {profileData && (

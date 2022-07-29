@@ -22,6 +22,7 @@ export interface IUserTranslation {
   author: string;
   original: string;
   image: string;
+  isBookMark: boolean;
   wordList: IWord[];
   commentList: IComment[];
 }

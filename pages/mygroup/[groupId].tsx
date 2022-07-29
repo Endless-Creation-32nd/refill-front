@@ -108,35 +108,43 @@ const MyGroup = () => {
                     />
                     <span>{transcription.participation.nickname}</span>
                   </div>
-                  <dl className='mt-2 rounded-lg border'>
-                    <div className='relative h-[300px] w-full'>
-                      <Image
-                        src={transcription.transcriptionImage}
-                        alt='member'
-                        objectFit='cover'
-                        layout='fill'
-                        className='rounded-t-lg'
-                      />
-                    </div>
-                    <div className='px-4 py-2'>
-                      <dt>{transcription.title}</dt>
-                      <div className='flex items-center justify-between gap-1'>
-                        <dd className='flex gap-3'>
-                          <span className='flex items-center gap-1'>
-                            <Bookmark />
-                            {transcription.bookmarkCount}
-                          </span>
-                          <span className='flex items-center gap-1'>
-                            <Comment />
-                            {transcription.commentCount}
-                          </span>
-                        </dd>
-                        <dd className='mt-2 text-sm text-middle-gray'>
-                          {dayjs(transcription.createdAt).format('YYYY.MM.DD')}
-                        </dd>
-                      </div>
-                    </div>
-                  </dl>
+                  <Link
+                    href={`/transcription/${transcription.transcriptionId}`}
+                  >
+                    <a>
+                      <dl className='mt-2 rounded-lg border'>
+                        <div className='relative h-[300px] w-full'>
+                          <Image
+                            src={transcription.transcriptionImage}
+                            alt='member'
+                            objectFit='contain'
+                            layout='fill'
+                            className='rounded-t-lg'
+                          />
+                        </div>
+                        <div className='px-4 py-2'>
+                          <dt>{transcription.title}</dt>
+                          <div className='flex items-center justify-between gap-1'>
+                            <dd className='relative -left-2 flex gap-2'>
+                              <span className='flex items-center gap-1'>
+                                <Bookmark />
+                                {transcription.bookmarkCount}
+                              </span>
+                              <span className='flex items-center gap-1'>
+                                <Comment />
+                                {transcription.commentCount}
+                              </span>
+                            </dd>
+                            <dd className='mt-2 text-sm text-middle-gray'>
+                              {dayjs(transcription.createdAt).format(
+                                'YYYY.MM.DD'
+                              )}
+                            </dd>
+                          </div>
+                        </div>
+                      </dl>
+                    </a>
+                  </Link>
                 </li>
               );
             })}
@@ -185,7 +193,7 @@ const MyGroup = () => {
       </Sidebar>
       <button
         type='button'
-        onClick={() => router.push(`/write/${myGroupData?.groupId}`)}
+        onClick={() => router.push('/write')}
         className='fixed inset-x-0 bottom-0  bg-black py-4 text-xl font-bold text-mint-main'
       >
         필사 올리기
