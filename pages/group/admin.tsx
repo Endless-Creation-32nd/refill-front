@@ -121,6 +121,10 @@ const GroupAdmin = () => {
   };
 
   const givePenalty = (member: DetailMember) => {
+    if (!myGroupData?.penalty) {
+      alert('패널티 제도가 없는 그룹입니다.');
+      return;
+    }
     if (member.lastWeekRemainActivity === 0) {
       alert('지난 주에 모든 필사 인증을 하여 패널티를 부여할 수 없습니다.');
       return;
@@ -142,6 +146,8 @@ const GroupAdmin = () => {
         if (error instanceof AuthenticationError) {
           router.back();
           alert('패널티를 줄 권한이 없습니다.');
+        } else if (errorType === errorTypes.E028) {
+          alert('패널티 제도가 없는 그룹입니다.');
         } else if (errorType === errorTypes.E029) {
           alert('그룹당 한 유저에게 최대 3회의 패널티를 부여할 수 있습니다.');
         } else if (errorType === errorTypes.E030) {
@@ -153,6 +159,10 @@ const GroupAdmin = () => {
   };
 
   const cancelPenalty = (member: DetailMember) => {
+    if (!myGroupData?.penalty) {
+      alert('패널티 제도가 없는 그룹입니다.');
+      return;
+    }
     if (member.penaltyCount === 0) {
       alert('패널티가 없습니다.');
       return;
@@ -277,9 +287,13 @@ const GroupAdmin = () => {
                           <div className='flex gap-2'>
                             <button
                               onClick={() => givePenalty(member)}
-                              disabled={member.lastWeekRemainActivity === 0}
+                              disabled={
+                                !myGroupData?.penalty ||
+                                member.lastWeekRemainActivity === 0
+                              }
                               className={`flex-1 rounded-[4px] py-1 text-xs shadow-md
                               ${
+                                !myGroupData?.penalty ||
                                 member.lastWeekRemainActivity === 0
                                   ? 'cursor-not-allowed bg-light-gray text-white'
                                   : 'bg-mint-main text-white'
@@ -289,10 +303,14 @@ const GroupAdmin = () => {
                             </button>
                             <button
                               onClick={() => cancelPenalty(member)}
-                              disabled={member.penaltyCount === 0}
+                              disabled={
+                                !myGroupData?.penalty ||
+                                member.penaltyCount === 0
+                              }
                               className={`flex-1 rounded-[4px] bg-light-gray py-1
                                text-xs text-white shadow-md
                                ${
+                                 !myGroupData?.penalty ||
                                  member.penaltyCount === 0
                                    ? 'cursor-not-allowed'
                                    : ''
