@@ -1,44 +1,46 @@
 import dayjs from 'dayjs';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import useSWR from 'swr';
-import { ReactElement, useState } from 'react';
-import { IGroup, IMember } from '../../types/IGroup';
+import useSWRInfinite from 'swr/infinite';
+import { ReactElement, UIEvent, useEffect, useState } from 'react';
+import { IGroup } from '../../types/IGroup';
 import { IUser } from '../../types/IUser';
+import { IMember } from '../../types/IMember';
+import { IGroupTranscription } from '../../types/IGroupTranscription';
+
 import BackButton from '../../components/BackButton';
 import CustomAvatar from '../../components/CustomAvatar';
 import Header from '../../components/header';
 import Layout from '../../components/layout';
 import Sidebar from '../../components/sidebar';
+
 import Bookmark from '../../assets/bookmark.svg';
 import Comment from '../../assets/comment.svg';
 import Person from '../../assets/search_person.svg';
 import Setting from '../../assets/member_setting.svg';
+
 import fetchData from '../../utils/fetchData';
 
-const transcription = {
-  memberId: 3,
-  image: null,
-  nickname: '오정진',
-  transcriptionImage:
-    'http://www.kpipa.or.kr/upload/book/KP0062/1384146725654_4162.jpg',
-  createdAt: '2022-07-25T23:00:11.965805',
-  title: 'hello world',
-  bookmark: 5,
-  comments: 5,
-};
-const member: IMember = {
-  memberId: 4,
-  nickname: '오정진',
-  image: null,
-  status: 'PARTICIPATE',
-};
-const TAG_LIST = ['취준', '문학', '취미'];
+const PAGE_SIZE = 10;
 
 const MyGroup = () => {
   const { data: userData } = useSWR<IUser>('/api/auth', fetchData);
   const { data: myGroupData } = useSWR<IGroup>('/api/group', fetchData);
+  const {
+    data: transcriptionData,
+    size,
+    setSize,
+  } = useSWRInfinite<IGroupTranscription[]>(
+    (index) =>
+      myGroupData
+        ? `/api/group/${myGroupData.groupId}/transcription?page=${index}&count=${PAGE_SIZE}`
+        : null,
+    fetchData
+  );
 
+  const router = useRouter();
   const [showSidebar, setShowSidebar] = useState(false);
 
   const leftChild = (
@@ -56,6 +58,7 @@ const MyGroup = () => {
   const onCloseSidebar = () => {
     setShowSidebar(false);
   };
+
   return (
     <>
       <Header
@@ -89,58 +92,59 @@ const MyGroup = () => {
               alt='logo'
               objectFit='cover'
               layout='fill'
+              priority
             />
           </div>
           <ul className='py-3 px-6'>
-            <li key={transcription.memberId} className='mb-5'>
-              <div className='flex items-center gap-2'>
-                <CustomAvatar
-                  member={member}
-                  width={'w-8'}
-                  height={'h-8'}
-                  size={'32'}
-                />
-                <span>{transcription.nickname}</span>
-              </div>
-              <dl className='mt-2 rounded-lg border'>
-                <div className='relative h-[300px] w-full'>
-                  <Image
-                    src={transcription.transcriptionImage}
-                    alt='member'
-                    objectFit='cover'
-                    layout='fill'
-                    className='rounded-t-lg'
-                  />
-                </div>
-                <div className='px-4 py-2'>
-                  <dt>{transcription.title}</dt>
-                  <div className='flex items-center justify-between gap-1'>
-                    <dd className='flex gap-3'>
-                      <span className='flex items-center gap-1'>
-                        <Bookmark />
-                        {transcription.bookmark}
-                      </span>
-                      <span className='flex items-center gap-1'>
-                        <Comment />
-                        {transcription.comments}
-                      </span>
-                    </dd>
-                    <dd className='mt-2 text-sm text-middle-gray'>
-                      {dayjs(transcription.createdAt).format('YYYY.MM.DD')}
-                    </dd>
+            {transcriptionData?.flat().map((transcription) => {
+              return (
+                <li key={transcription.transcriptionId} className='mb-5'>
+                  <div className='flex items-center gap-2'>
+                    <CustomAvatar
+                      image={transcription.participation.image}
+                      nickname={transcription.participation.nickname}
+                      width={'w-8'}
+                      height={'h-8'}
+                      size={'32'}
+                    />
+                    <span>{transcription.participation.nickname}</span>
                   </div>
-                </div>
-              </dl>
-            </li>
+                  <dl className='mt-2 rounded-lg border'>
+                    <div className='relative h-[300px] w-full'>
+                      <Image
+                        src={transcription.transcriptionImage}
+                        alt='member'
+                        objectFit='cover'
+                        layout='fill'
+                        className='rounded-t-lg'
+                      />
+                    </div>
+                    <div className='px-4 py-2'>
+                      <dt>{transcription.title}</dt>
+                      <div className='flex items-center justify-between gap-1'>
+                        <dd className='flex gap-3'>
+                          <span className='flex items-center gap-1'>
+                            <Bookmark />
+                            {transcription.bookmarkCount}
+                          </span>
+                          <span className='flex items-center gap-1'>
+                            <Comment />
+                            {transcription.commentCount}
+                          </span>
+                        </dd>
+                        <dd className='mt-2 text-sm text-middle-gray'>
+                          {dayjs(transcription.createdAt).format('YYYY.MM.DD')}
+                        </dd>
+                      </div>
+                    </div>
+                  </dl>
+                </li>
+              );
+            })}
           </ul>
         </div>
       </main>
-      <button
-        type='button'
-        className='fixed inset-x-0 bottom-0  bg-black py-4 text-xl font-bold text-mint-main'
-      >
-        필사 올리기
-      </button>
+
       <Sidebar show={showSidebar} onCloseSidebar={onCloseSidebar}>
         <div className='m-auto min-h-[300px] w-full px-4'>
           <h3 className='sticky top-0 z-10 flex items-center gap-2 border-b border-b-gray-300 bg-white py-4 text-xl font-semibold'>
@@ -159,7 +163,8 @@ const MyGroup = () => {
                 return (
                   <li key={member.memberId} className='flex items-center gap-2'>
                     <CustomAvatar
-                      member={member}
+                      image={member.image}
+                      nickname={member.nickname}
                       width={'w-8'}
                       height={'h-8'}
                       size={'32'}
@@ -172,6 +177,13 @@ const MyGroup = () => {
           </ul>
         </div>
       </Sidebar>
+      <button
+        type='button'
+        onClick={() => router.push(`/write/${myGroupData?.groupId}`)}
+        className='fixed inset-x-0 bottom-0  bg-black py-4 text-xl font-bold text-mint-main'
+      >
+        필사 올리기
+      </button>
     </>
   );
 };

@@ -1,3 +1,4 @@
+import styled from '@emotion/styled';
 import Head from 'next/head';
 import Image from 'next/image';
 import { ReactElement, useEffect, useState } from 'react';
@@ -24,18 +25,20 @@ const Detail = () => {
         <div className='bg-white pt-16'>
           {writing && (
             <>
-              <div className='flex flex-col p-4'>
-                <div className='relative h-[246px] w-[158px] self-center'>
-                  <Image
-                    src={writing?.imageUrl}
-                    alt='book'
-                    layout='fill'
-                    objectFit='cover'
-                    className='rounded-md'
-                  />
-                </div>
-                <h1 className='mt-2 text-2xl font-bold'>{writing?.title}</h1>
-                <p className='mt-4 indent-2 text-[#666666]'>
+              <div className='flex flex-col gap-4 px-6'>
+                {writing?.imageUrl && (
+                  <div className='relative h-[246px] w-[158px] self-center'>
+                    <Image
+                      src={writing?.imageUrl}
+                      alt='book'
+                      layout='fill'
+                      objectFit='cover'
+                      className='rounded-md'
+                    />
+                  </div>
+                )}
+                <h1 className='text-2xl font-bold'>{writing?.title}</h1>
+                <p className='indent-4 text-[#666666]'>
                   {writing?.description}
                 </p>
               </div>

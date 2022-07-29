@@ -1,4 +1,4 @@
-import { IMember } from './IGroup';
+import { IMember } from './IMember';
 
 export interface IMemberType {
   pendingMembers: IMember[];
