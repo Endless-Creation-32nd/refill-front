@@ -4,10 +4,9 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import useSWR from 'swr';
 import useSWRInfinite from 'swr/infinite';
-import { ReactElement, UIEvent, useEffect, useState } from 'react';
+import { ReactElement, useState } from 'react';
 import { IGroup } from '../../types/IGroup';
 import { IUser } from '../../types/IUser';
-import { IMember } from '../../types/IMember';
 import { IGroupTranscription } from '../../types/IGroupTranscription';
 
 import BackButton from '../../components/BackButton';

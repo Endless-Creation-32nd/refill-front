@@ -1,21 +1,26 @@
+import useSWR from 'swr';
+import { useRouter } from 'next/router';
+
 import BackButton from '../../components/BackButton';
 import Header from '../../components/header';
-import Person from '../../assets/search_person.svg';
-import { useRouter } from 'next/router';
-import fetchData from '../../utils/fetchData';
-import useSWR from 'swr';
-import { IMemberType } from '../../types/IMemberType';
 import CustomAvatar from '../../components/CustomAvatar';
-import { IMember } from '../../types/IMember';
+
+import fetchData from '../../utils/fetchData';
 import { AuthenticationError } from '../../utils/error';
 import { axiosPrivate } from '../../utils/axiosPrivate';
 
-const member: IMember = {
-  memberId: 4,
-  nickname: '오정진',
-  image: null,
-  status: 'PARTICIPATE',
-};
+import { IMember } from '../../types/IMember';
+
+import Person from '../../assets/search_person.svg';
+
+interface DetailMember extends IMember {
+  lastWeekRemainActivity: number;
+}
+
+interface MemberTypes {
+  pendingMembers: IMember[];
+  participateMembers: DetailMember[];
+}
 
 const GroupAdmin = () => {
   const router = useRouter();
@@ -24,14 +29,14 @@ const GroupAdmin = () => {
     data: memberData,
     mutate: mutateMemberData,
     error,
-  } = useSWR<IMemberType>(
+  } = useSWR<MemberTypes>(
     query.groupId ? `/api/group/admin/${query.groupId}/members` : null,
     fetchData
   );
   if (error) {
     if (error instanceof AuthenticationError) {
-      router.back();
       alert(error.message);
+      router.back();
     }
   }
   const leftChild = (
