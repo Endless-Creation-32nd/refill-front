@@ -23,13 +23,6 @@ import Setting from '../../assets/member_setting.svg';
 
 import fetchData from '../../utils/fetchData';
 
-const member: IMember = {
-  memberId: 4,
-  nickname: '오정진',
-  image: null,
-  status: 'PARTICIPATE',
-};
-
 const PAGE_SIZE = 10;
 
 const MyGroup = () => {
@@ -108,8 +101,8 @@ const MyGroup = () => {
                 <li key={transcription.transcriptionId} className='mb-5'>
                   <div className='flex items-center gap-2'>
                     <CustomAvatar
-                      image={member.image}
-                      nickname={member.nickname}
+                      image={transcription.participation.image}
+                      nickname={transcription.participation.nickname}
                       width={'w-8'}
                       height={'h-8'}
                       size={'32'}
