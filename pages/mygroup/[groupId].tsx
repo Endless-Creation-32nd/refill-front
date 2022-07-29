@@ -98,45 +98,64 @@ const MyGroup = () => {
             {transcriptionData?.flat().map((transcription) => {
               return (
                 <li key={transcription.transcriptionId} className='mb-5'>
-                  <div className='flex items-center gap-2'>
-                    <CustomAvatar
-                      image={transcription.participation.image}
-                      nickname={transcription.participation.nickname}
-                      width={'w-8'}
-                      height={'h-8'}
-                      size={'32'}
-                    />
-                    <span>{transcription.participation.nickname}</span>
-                  </div>
-                  <dl className='mt-2 rounded-lg border'>
-                    <div className='relative h-[300px] w-full'>
-                      <Image
-                        src={transcription.transcriptionImage}
-                        alt='member'
-                        objectFit='cover'
-                        layout='fill'
-                        className='rounded-t-lg'
-                      />
-                    </div>
-                    <div className='px-4 py-2'>
-                      <dt>{transcription.title}</dt>
-                      <div className='flex items-center justify-between gap-1'>
-                        <dd className='flex gap-3'>
-                          <span className='flex items-center gap-1'>
-                            <Bookmark />
-                            {transcription.bookmarkCount}
-                          </span>
-                          <span className='flex items-center gap-1'>
-                            <Comment />
-                            {transcription.commentCount}
-                          </span>
-                        </dd>
-                        <dd className='mt-2 text-sm text-middle-gray'>
-                          {dayjs(transcription.createdAt).format('YYYY.MM.DD')}
-                        </dd>
+                  <Link
+                    href={
+                      userData?.memberId ===
+                      transcription.participation.memberId
+                        ? '/mypage'
+                        : `/profile/${transcription.participation.memberId}`
+                    }
+                  >
+                    <a>
+                      <div className='flex items-center gap-2'>
+                        <CustomAvatar
+                          image={transcription.participation.image}
+                          nickname={transcription.participation.nickname}
+                          width={'w-8'}
+                          height={'h-8'}
+                          size={'32'}
+                        />
+                        <span>{transcription.participation.nickname}</span>
                       </div>
-                    </div>
-                  </dl>
+                    </a>
+                  </Link>
+                  <Link
+                    href={`/transcription/${transcription.transcriptionId}`}
+                  >
+                    <a>
+                      <dl className='mt-2 rounded-lg border'>
+                        <div className='relative h-[300px] w-full'>
+                          <Image
+                            src={transcription.transcriptionImage}
+                            alt='member'
+                            objectFit='contain'
+                            layout='fill'
+                            className='rounded-t-lg'
+                          />
+                        </div>
+                        <div className='px-4 py-2'>
+                          <dt>{transcription.title}</dt>
+                          <div className='flex items-center justify-between gap-1'>
+                            <dd className='relative -left-2 flex gap-2'>
+                              <span className='flex items-center gap-1'>
+                                <Bookmark />
+                                {transcription.bookmarkCount}
+                              </span>
+                              <span className='flex items-center gap-1'>
+                                <Comment />
+                                {transcription.commentCount}
+                              </span>
+                            </dd>
+                            <dd className='mt-2 text-sm text-middle-gray'>
+                              {dayjs(transcription.createdAt).format(
+                                'YYYY.MM.DD'
+                              )}
+                            </dd>
+                          </div>
+                        </div>
+                      </dl>
+                    </a>
+                  </Link>
                 </li>
               );
             })}
@@ -160,23 +179,33 @@ const MyGroup = () => {
             {myGroupData?.participationMembers &&
               myGroupData?.participationMembers.map((member) => {
                 return (
-                  <li key={member.memberId} className='flex items-center gap-2'>
-                    <CustomAvatar
-                      image={member.image}
-                      nickname={member.nickname}
-                      width={'w-8'}
-                      height={'h-8'}
-                      size={'32'}
-                    />
-                    <div className='flex-1 text-sm'>{member.nickname}</div>
-                    {member.memberId === myGroupData?.adminId && (
-                      <span className='text-xs text-mint-main'>방장</span>
-                    )}
-                    {member.penaltyCount !== 0 && (
-                      <span className='text-xs text-warning'>
-                        패널티 {member.penaltyCount}회
-                      </span>
-                    )}
+                  <li key={member.memberId}>
+                    <Link
+                      href={
+                        userData?.memberId === member.memberId
+                          ? '/mypage'
+                          : `/profile/${member.memberId}`
+                      }
+                    >
+                      <a className='flex items-center gap-2'>
+                        <CustomAvatar
+                          image={member.image}
+                          nickname={member.nickname}
+                          width={'w-8'}
+                          height={'h-8'}
+                          size={'32'}
+                        />
+                        <div className='flex-1 text-sm'>{member.nickname}</div>
+                        {member.memberId === myGroupData?.adminId && (
+                          <span className='text-xs text-mint-main'>방장</span>
+                        )}
+                        {member.penaltyCount !== 0 && (
+                          <span className='text-xs text-warning'>
+                            패널티 {member.penaltyCount}회
+                          </span>
+                        )}
+                      </a>
+                    </Link>
                   </li>
                 );
               })}
@@ -185,7 +214,7 @@ const MyGroup = () => {
       </Sidebar>
       <button
         type='button'
-        onClick={() => router.push(`/write/${myGroupData?.groupId}`)}
+        onClick={() => router.push('/write')}
         className='fixed inset-x-0 bottom-0  bg-black py-4 text-xl font-bold text-mint-main'
       >
         필사 올리기

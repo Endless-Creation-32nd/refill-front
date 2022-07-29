@@ -15,7 +15,7 @@ const Sidebar = ({
         id='opacity-background'
         onClick={onCloseSidebar}
         className={`fixed inset-0 ${
-          show ? 'z-[100] bg-black opacity-50' : 'z-0'
+          show ? 'z-[100] bg-black opacity-50' : 'z-[-1]'
         } duration-300 ease-in-out`}
       ></div>
 

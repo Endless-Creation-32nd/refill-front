@@ -1,19 +1,29 @@
-import { ChangeEvent, FormEvent, ReactElement, useRef, useState } from 'react';
+import {
+  ChangeEvent,
+  FormEvent,
+  ReactElement,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import axios from 'axios';
 import Head from 'next/head';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import useSWRInfinite from 'swr/infinite';
 
-import BackButton from '../../components/BackButton';
-import Header from '../../components/header';
-import Layout from '../../components/layout';
-import Modal from '../../components/modal';
-import Loading from '../../components/loading';
+import BackButton from '../components/BackButton';
+import Header from '../components/header';
+import Layout from '../components/layout';
+import Modal from '../components/modal';
+import Loading from '../components/loading';
 
-import { IWordItem } from '../../types/IWordItem';
-import { axiosPrivate } from '../../utils/axiosPrivate';
-import { errorTypes } from '../../utils';
+import { IWordItem } from '../types/IWordItem';
+import { axiosPrivate } from '../utils/axiosPrivate';
+import { errorTypes } from '../utils';
+import useSWR from 'swr';
+import { IGroup } from '../types/IGroup';
+import fetchData from '../utils/fetchData';
 
 interface IForm {
   title: string;
@@ -47,7 +57,6 @@ const TranscriptionForm = () => {
     original: '',
     file: undefined,
   };
-
   const [form, setForm] = useState<IForm>(initialForm);
   const [previewImage, setPreviewImage] = useState<string>('');
   const [word, setWord] = useState('');
@@ -76,6 +85,15 @@ const TranscriptionForm = () => {
         : null,
     fetchWords
   );
+  const { data: myGroupData } = useSWR<IGroup>('/api/group', fetchData);
+
+  const wordInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (showToggleWordModal && wordInputRef) {
+      wordInputRef.current?.focus();
+    }
+  }, [showToggleWordModal]);
 
   const encodeFileToBase64 = (e: ChangeEvent<HTMLInputElement>) => {
     const { files } = e.target;
@@ -105,6 +123,8 @@ const TranscriptionForm = () => {
   };
 
   const toggleWordModal = () => {
+    console.log(wordInputRef);
+    wordInputRef?.current?.focus();
     setShowToggleWordModal((prev) => !prev);
   };
 
@@ -155,10 +175,16 @@ const TranscriptionForm = () => {
   const onSubmitTranscription = (e: FormEvent<HTMLButtonElement>) => {
     e.preventDefault();
     const { title, author, original, file } = form;
+    let isGroup: boolean = true;
 
-    if (!query.groupId) {
+    if (query.p) {
+      isGroup = false;
+    }
+
+    if (isGroup && !myGroupData) {
       alert('그룹 정보를 받아올 수 없습니다.');
       router.replace('/');
+      return;
     }
 
     if (!file) {
@@ -195,8 +221,8 @@ const TranscriptionForm = () => {
           author,
           original: original ? original.trim() : null,
           imageUrl,
-          isGroup: true,
-          groupId: query.groupId,
+          isGroup,
+          groupId: isGroup ? myGroupData?.groupId : null,
           wordList: wordList.length > 0 ? wordList.slice() : null,
         };
         axiosPrivate
@@ -374,7 +400,7 @@ const TranscriptionForm = () => {
                       return (
                         <li key={index} className='mb-4'>
                           <dl>
-                            <dt className='mb-2 w-min rounded-[4px] border border-black px-1 text-xs font-semibold'>
+                            <dt className='mb-2 w-max rounded-[4px] border border-black px-1 text-xs font-semibold'>
                               {word.word}
                             </dt>
                             <dd className='indent-2 text-sm'>
@@ -408,6 +434,7 @@ const TranscriptionForm = () => {
               onChange={onChangeWord}
               placeholder='단어 검색하기'
               className='flex-1 text-sm'
+              ref={wordInputRef}
             />
             <svg
               xmlns='http://www.w3.org/2000/svg'
