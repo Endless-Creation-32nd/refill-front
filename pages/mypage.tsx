@@ -1,3 +1,5 @@
+import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { ReactElement } from 'react';
 import useSWR from 'swr';
@@ -16,8 +18,7 @@ import { IProfile } from '../types/IProfile';
 import { IUser } from '../types/IUser';
 
 import Character from '../assets/character.svg';
-import Link from 'next/link';
-import Image from 'next/image';
+import Setting from '../assets/mypage_setting.svg';
 
 interface Transcription {
   transcriptionId: number;
@@ -45,22 +46,6 @@ const Mypage = () => {
     fetchData
   );
   const router = useRouter();
-
-  const onLogout = () => {
-    axiosPrivate
-      .get('/api/auth/logout')
-      .then((response) => {
-        if (response.status === 200) {
-          localStorage.removeItem('accessToken');
-          router.replace('/login');
-        }
-      })
-      .catch((error) => {
-        if (error.errorType === errorTypes.E012) {
-          router.replace('/login');
-        }
-      });
-  };
 
   const transcriptions = transcriptionData
     ? ([] as Transcription[]).concat(...transcriptionData)
@@ -162,21 +147,30 @@ const Mypage = () => {
         </ul>
       </section>
       <Link href={`/write?p=${userData?.memberId}`}>
-        <a className='fixed bottom-20 right-1/2 translate-x-1/2 rounded-lg bg-black px-4 py-1 text-white'>
+        <a className='fixed bottom-24 right-1/2 translate-x-1/2 rounded-lg bg-black px-4 py-2 font-semibold text-white shadow-md'>
           내 필사 올리기
         </a>
       </Link>
-      <button onClick={onLogout}>logout</button>
     </div>
   );
 };
 
 Mypage.getLayout = function getLayout(page: ReactElement) {
   const leftChild = <h1 className='tab-title'>마이페이지</h1>;
-
+  const rightChild = (
+    <Link href='/setting'>
+      <a>
+        <Setting />
+      </a>
+    </Link>
+  );
   return (
     <Layout>
-      <Header leftChild={leftChild} style={'bg-white'} />
+      <Header
+        leftChild={leftChild}
+        rightChild={rightChild}
+        style={'bg-white'}
+      />
       <main className='main bg-bgColor'>
         <div className='bg-bgColor pt-16'>{page}</div>
       </main>

@@ -98,16 +98,27 @@ const MyGroup = () => {
             {transcriptionData?.flat().map((transcription) => {
               return (
                 <li key={transcription.transcriptionId} className='mb-5'>
-                  <div className='flex items-center gap-2'>
-                    <CustomAvatar
-                      image={transcription.participation.image}
-                      nickname={transcription.participation.nickname}
-                      width={'w-8'}
-                      height={'h-8'}
-                      size={'32'}
-                    />
-                    <span>{transcription.participation.nickname}</span>
-                  </div>
+                  <Link
+                    href={
+                      userData?.memberId ===
+                      transcription.participation.memberId
+                        ? '/mypage'
+                        : `/profile/${transcription.participation.memberId}`
+                    }
+                  >
+                    <a>
+                      <div className='flex items-center gap-2'>
+                        <CustomAvatar
+                          image={transcription.participation.image}
+                          nickname={transcription.participation.nickname}
+                          width={'w-8'}
+                          height={'h-8'}
+                          size={'32'}
+                        />
+                        <span>{transcription.participation.nickname}</span>
+                      </div>
+                    </a>
+                  </Link>
                   <Link
                     href={`/transcription/${transcription.transcriptionId}`}
                   >
@@ -168,23 +179,33 @@ const MyGroup = () => {
             {myGroupData?.participationMembers &&
               myGroupData?.participationMembers.map((member) => {
                 return (
-                  <li key={member.memberId} className='flex items-center gap-2'>
-                    <CustomAvatar
-                      image={member.image}
-                      nickname={member.nickname}
-                      width={'w-8'}
-                      height={'h-8'}
-                      size={'32'}
-                    />
-                    <div className='flex-1 text-sm'>{member.nickname}</div>
-                    {member.memberId === myGroupData?.adminId && (
-                      <span className='text-xs text-mint-main'>방장</span>
-                    )}
-                    {member.penaltyCount !== 0 && (
-                      <span className='text-xs text-warning'>
-                        패널티 {member.penaltyCount}회
-                      </span>
-                    )}
+                  <li key={member.memberId}>
+                    <Link
+                      href={
+                        userData?.memberId === member.memberId
+                          ? '/mypage'
+                          : `/profile/${member.memberId}`
+                      }
+                    >
+                      <a className='flex items-center gap-2'>
+                        <CustomAvatar
+                          image={member.image}
+                          nickname={member.nickname}
+                          width={'w-8'}
+                          height={'h-8'}
+                          size={'32'}
+                        />
+                        <div className='flex-1 text-sm'>{member.nickname}</div>
+                        {member.memberId === myGroupData?.adminId && (
+                          <span className='text-xs text-mint-main'>방장</span>
+                        )}
+                        {member.penaltyCount !== 0 && (
+                          <span className='text-xs text-warning'>
+                            패널티 {member.penaltyCount}회
+                          </span>
+                        )}
+                      </a>
+                    </Link>
                   </li>
                 );
               })}

@@ -6,6 +6,10 @@ import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import { errorTypes } from '../utils';
 import { axiosPublic } from '../utils/axiosPublic';
 
+import Kakao from '../assets/kakao_logo.svg';
+import Google from '../assets/google_logo.svg';
+import Head from 'next/head';
+
 const Login: NextPage = () => {
   const initialState = {
     email: '',
@@ -113,76 +117,83 @@ const Login: NextPage = () => {
   }, [onSubmit]);
 
   return (
-    <div className='flex h-full w-full flex-col items-center bg-white p-6'>
-      <div className='relative z-10 mt-36 mb-[81px] h-[35px] w-[112px]'>
-        <Image
-          src='/images/logo_mint.png'
-          alt='logo'
-          layout='fill'
-          objectFit='cover'
-        />
-      </div>
-      <form className='mb-32 flex w-full flex-col gap-2'>
-        <input
-          id='email'
-          type='email'
-          name='email'
-          autoComplete='username'
-          required
-          value={form.email}
-          onChange={onChangeEmail}
-          placeholder='이메일'
-          className='w-full rounded-md border border-light-gray px-4 py-3 text-sm'
-        />
-        <input
-          id='password'
-          type='password'
-          name='password'
-          required
-          value={form.password}
-          onChange={onChangePassWord}
-          placeholder='비밀번호'
-          autoComplete='current-password'
-          className='w-full rounded-md border border-light-gray px-4 py-3 text-sm'
-        />
-        <div className='flex w-full justify-between'>
-          <label className='flex items-center'>
-            <input type='checkbox' />
-            <span className='ml-2 text-xs text-[#707070]'>아이디 저장</span>
-          </label>
-          <button type='button' className='text-xs text-[#707070]'>
-            비밀번호 찾기
+    <>
+      <Head>
+        <title>Refill 로그인</title>
+      </Head>
+      <div className='flex h-full w-full flex-col items-center bg-white p-6'>
+        <div className='relative z-10 mt-36 mb-[81px] h-[35px] w-[112px]'>
+          <Image
+            src='/images/logo_mint.png'
+            alt='logo'
+            layout='fill'
+            objectFit='cover'
+          />
+        </div>
+        <form className='mb-32 flex w-full flex-col gap-2'>
+          <input
+            id='email'
+            type='email'
+            name='email'
+            autoComplete='username'
+            required
+            value={form.email}
+            onChange={onChangeEmail}
+            placeholder='이메일'
+            className='w-full rounded-md border border-light-gray px-4 py-3 text-sm'
+          />
+          <input
+            id='password'
+            type='password'
+            name='password'
+            required
+            value={form.password}
+            onChange={onChangePassWord}
+            placeholder='비밀번호'
+            autoComplete='current-password'
+            className='w-full rounded-md border border-light-gray px-4 py-3 text-sm'
+          />
+          <div className='flex w-full justify-between'>
+            <label className='flex items-center'>
+              <input type='checkbox' />
+              <span className='ml-2 text-xs text-[#707070]'>아이디 저장</span>
+            </label>
+            <button type='button' className='text-xs text-[#707070]'>
+              비밀번호 찾기
+            </button>
+          </div>
+        </form>
+        <div className='flex w-full flex-col items-center gap-2'>
+          <button
+            type='submit'
+            onClick={onSubmit}
+            className='h-12 w-full rounded-md bg-black py-3 text-lg text-mint-main'
+          >
+            로그인
           </button>
-        </div>
-      </form>
-      <div className='flex w-full flex-col items-center gap-2'>
-        <button
-          type='submit'
-          onClick={onSubmit}
-          className='h-12 w-full rounded-md bg-black py-3 text-lg text-mint-main'
-        >
-          로그인
-        </button>
-        <button
-          type='button'
-          className='h-12 w-full rounded-md border border-[#FFE600] text-sm'
-        >
-          카카오톡
-        </button>
-        <button
-          type='button'
-          className='h-12 w-full rounded-md border border-light-gray text-sm'
-        >
-          구글
-        </button>
-        <div className='text-xs'>
-          <span className='opacity-50'>아직 회원이 아니라면?</span>
-          <Link href='/signup'>
-            <a className='undeline'>회원가입하기</a>
-          </Link>
+          <button
+            type='button'
+            className='flex h-12 w-full items-center justify-center gap-2 rounded-md border border-[#FFE600] text-sm'
+          >
+            <Kakao />
+            카카오톡으로 로그인
+          </button>
+          <button
+            type='button'
+            className='flex h-12 w-full items-center justify-center gap-2 rounded-md border border-light-gray text-sm'
+          >
+            <Google />
+            Google로 로그인
+          </button>
+          <div className='text-xs'>
+            <span className='opacity-50'>아직 회원이 아니라면?</span>
+            <Link href='/signup'>
+              <a className='ml-1 underline'>회원가입하기</a>
+            </Link>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 export default Login;

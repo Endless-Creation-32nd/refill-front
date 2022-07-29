@@ -1,7 +1,14 @@
 import dayjs from 'dayjs';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { ChangeEvent, FormEvent, ReactElement, useState } from 'react';
+import {
+  ChangeEvent,
+  FormEvent,
+  ReactElement,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import useSWR from 'swr';
 import Sheet from 'react-modal-sheet';
 
@@ -22,6 +29,7 @@ import CustomAvatar from '../../components/CustomAvatar';
 import Bookmark from '../../assets/bookmark.svg';
 import FillBookmark from '../../assets/bookmark_fill.svg';
 import Comment from '../../assets/comment.svg';
+import Link from 'next/link';
 
 const TranscriptionDetail = () => {
   const { data: userData } = useSWR<IUser>('/api/auth', fetchData);
@@ -44,6 +52,17 @@ const TranscriptionDetail = () => {
   const [openComment, setOpenComment] = useState(false);
 
   const [comment, setComment] = useState('');
+  const commentListRef = useRef<HTMLUListElement>(null);
+
+  useEffect(() => {
+    if (commentListRef && openComment) {
+      commentListRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'end',
+        inline: 'nearest',
+      });
+    }
+  }, [openComment, transcriptionItem]);
 
   if (error) {
     return null;
@@ -187,21 +206,31 @@ const TranscriptionDetail = () => {
               <Sheet.Container>
                 <Sheet.Header />
                 <Sheet.Content>
-                  <div className='h-full overflow-auto pb-[81px]'>
-                    <ul className='divide-y border'>
+                  <div className='h-full overflow-auto'>
+                    <ul className='border-t pb-[81px]' ref={commentListRef}>
                       {transcriptionItem.commentList.map((commentItem) => {
                         return (
                           <li
                             key={commentItem.commentId}
-                            className='flex items-center gap-4 px-6 py-4'
+                            className='flex items-center gap-4 border-b px-6 py-4'
                           >
-                            <CustomAvatar
-                              image={commentItem.image}
-                              nickname={commentItem.nickname}
-                              width={'w-10'}
-                              height={'h-10'}
-                              size={'40'}
-                            />
+                            <Link
+                              href={
+                                userData?.memberId === commentItem.memberId
+                                  ? '/mypage'
+                                  : `/profile/${commentItem.memberId}`
+                              }
+                            >
+                              <a>
+                                <CustomAvatar
+                                  image={commentItem.image}
+                                  nickname={commentItem.nickname}
+                                  width={'w-10'}
+                                  height={'h-10'}
+                                  size={'40'}
+                                />
+                              </a>
+                            </Link>
                             <div className='flex flex-1 flex-col'>
                               <div>
                                 <span className='text-xs font-bold'>
