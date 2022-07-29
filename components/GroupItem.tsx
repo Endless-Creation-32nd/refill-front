@@ -1,16 +1,20 @@
 import dayjs from 'dayjs';
+import styled from '@emotion/styled';
 import Link from 'next/link';
 import { IGroup } from '../types/IGroup';
+import Person from '../assets/group_person.svg';
+import Count from '../assets/group_count.svg';
+import Period from '../assets/group_period.svg';
 
-interface Props {
+interface PropsType {
   group: IGroup;
 }
-const GroupItem: React.FC<Props> = ({ group }) => {
+const GroupItem: React.FC<PropsType> = ({ group }) => {
   return (
     <Link href={`/group/${group.groupId}`}>
       <a>
-        <li className='rounded-lg border bg-white p-4 shadow-md'>
-          <ul className='flex gap-2'>
+        <li className='rounded-lg border bg-white p-4 shadow-sm'>
+          <ul className='flex flex-wrap gap-2'>
             {group.tagList.map((tag, index) => {
               return (
                 <li
@@ -23,31 +27,30 @@ const GroupItem: React.FC<Props> = ({ group }) => {
             })}
           </ul>
           <div className='mt-3'>
-            <span className='text-sm font-bold'>{group.groupName}</span>
-            <p className='text-xs'>{group.description}</p>
+            <span className='text-sm font-bold'>{group.name}</span>
+            <EllipsisP className='text-xs text-middle-gray'>
+              {group.description}
+            </EllipsisP>
           </div>
           <ul className='mt-6 flex flex-wrap gap-2 text-xs'>
-            <li>
-              {group.currentMember} / {group.maxMember}
+            <li className='flex items-center gap-1'>
+              <Person />
+              <span className='text-xs text-middle-gray'>
+                {group.participationMembers.length}/{group.maxMember}명
+              </span>
             </li>
-            <li>주 {group.postCount}회</li>
-            <li className='flex items-center justify-center'>
-              <svg
-                xmlns='http://www.w3.org/2000/svg'
-                className='h-6 w-6'
-                fill='none'
-                viewBox='0 0 24 24'
-                stroke='currentColor'
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  d='M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z'
-                />
-              </svg>{' '}
-              {dayjs(group.startTime).format('YYYY.MM.DD')} -{' '}
-              {dayjs(group.endTime).format('YYYY.MM.DD')}
+            <li className='flex items-center gap-1'>
+              <Count />
+              <span className='text-xs text-middle-gray'>
+                주 {group.perWeek}회
+              </span>
+            </li>
+            <li className='flex items-center gap-1'>
+              <Period width={20} height={20} />
+              <span className='text-xs text-middle-gray'>
+                {dayjs(group.startTime).format('YY.MM.DD')}-
+                {dayjs(group.endTime).format('YY.MM.DD')}
+              </span>
             </li>
           </ul>
         </li>
@@ -56,4 +59,13 @@ const GroupItem: React.FC<Props> = ({ group }) => {
   );
 };
 
+const EllipsisP = styled.p`
+  text-overflow: ellipsis;
+  overflow: hidden;
+  word-break: break-word;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+`;
 export default GroupItem;

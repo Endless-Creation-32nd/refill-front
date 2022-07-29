@@ -1,11 +1,17 @@
+import { IMember } from './IMember';
+
 export interface IGroup {
-  groupId: string;
-  groupName: string;
+  groupId: number;
+  name: string;
   description: string;
-  tagList: string[];
+  penalty: boolean;
   maxMember: number;
-  currentMember: number;
-  postCount: number;
+  adminId: number;
+  perWeek: number;
   startTime: string;
   endTime: string;
+  tagList: string[];
+  createdAt: string;
+  updatedAt: string;
+  participationMembers: IMember[];
 }
