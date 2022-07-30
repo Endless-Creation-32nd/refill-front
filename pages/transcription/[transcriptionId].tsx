@@ -166,7 +166,8 @@ const TranscriptionDetail = () => {
                     {transcriptionItem.title}
                   </h3>
                   <div className='text-xs'>{transcriptionItem.author}</div>
-                  {isURL(transcriptionItem.original) ? (
+                  {transcriptionItem.original &&
+                  isURL(transcriptionItem.original) ? (
                     <a
                       className='break-all text-xs text-sky-500 underline'
                       target='_blank'

@@ -52,7 +52,7 @@ const MyGroup = () => {
   const transcriptionList = transcriptionData
     ? ([] as IGroupTranscription[]).concat(...transcriptionData)
     : [];
-  const isEmpty = transcriptionData?.length === 0;
+  const isEmpty = transcriptionData?.[0].length === 0;
   const isLoadingInitialData = !transcriptionData && !error;
   const isLoadingMore =
     size > 0 &&
@@ -90,7 +90,7 @@ const MyGroup = () => {
       className='z-50 flex cursor-pointer items-center text-white'
       onClick={() => setShowSidebar(!showSidebar)}
     >
-      <span className='text-xl font-thin'>
+      <span className='text-xl font-light'>
         {myGroupData?.participationMembers.length}
       </span>
       <Person width='24' height='24' fill='#ffffff' />
@@ -142,7 +142,9 @@ const MyGroup = () => {
                 <Loading />
               </div>
             )}
-            {isEmpty && <p>그룹 내 필사 목록이 없습니다.</p>}
+            {isEmpty && (
+              <p className='m-auto text-sm'>그룹 내 필사 목록이 없습니다.</p>
+            )}
             {transcriptionList.map((transcription) => {
               return (
                 <li key={transcription.transcriptionId} className='mb-5'>

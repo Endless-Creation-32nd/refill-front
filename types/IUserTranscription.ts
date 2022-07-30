@@ -20,7 +20,7 @@ export interface IUserTranslation {
   transcriptionId: number;
   title: string;
   author: string;
-  original: string;
+  original: string | null;
   image: string;
   isBookMark: boolean;
   wordList: IWord[];

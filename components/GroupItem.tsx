@@ -15,7 +15,6 @@ const GroupItem: React.FC<PropsType> = ({ group }) => {
       <a>
         <li className='rounded-lg border bg-white p-4 shadow-sm'>
           <ul className='flex max-h-[56px] flex-wrap gap-2 overflow-hidden'>
-            {/* <ul className='grid grid-flow-col grid-rows-2 gap-2'> */}
             {group.tagList.map((tag, index) => {
               return (
                 <li
