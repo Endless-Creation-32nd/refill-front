@@ -1,3 +1,4 @@
+import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -39,6 +40,9 @@ const BookmarkPage = () => {
   const isEmpty = transcriptionData?.[0]?.length === 0;
   return (
     <>
+      <Head>
+        <title>북마크 목록</title>
+      </Head>
       <section className='px-6 pb-6'>
         <h3 className='mb-2 text-xl font-semibold'>북마크</h3>
         {isEmpty && <p className='m-auto text-sm'>저장한 북마크가 없습니다.</p>}

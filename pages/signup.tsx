@@ -4,10 +4,8 @@ import SignupLayout from '../components/signup-layout';
 import { SignupFormContext } from '../libs/SignupFormContext';
 import type { SignupFormContextType } from '../libs/SignupFormContext';
 import type { NextPageWithLayout } from './_app';
-import axios from 'axios';
 import { useRouter } from 'next/router';
 import { errorTypes } from '../utils';
-import Header from '../components/header';
 import { axiosPublic } from '../utils/axiosPublic';
 
 const Signup: NextPageWithLayout = () => {
@@ -117,7 +115,7 @@ const Signup: NextPageWithLayout = () => {
     }
 
     if (!isValidNickname) {
-      alert('닉네임 형식을 확인해주세요.\n(2~8글자 한글만)');
+      alert('닉네임 형식을 확인해주세요.\n(띄어쓰기 없이 2~8글자 한글만)');
       return;
     }
 
@@ -201,7 +199,7 @@ const Signup: NextPageWithLayout = () => {
             required
             value={form.nickname}
             onChange={onChangeNickname}
-            placeholder='최소 2글자에서 8글자로 입력해주세요.'
+            placeholder='띄어쓰기 없이 2 ~ 8글자 한글로만 입력해주세요.'
             className='rounded-md border border-light-gray px-4 py-3 text-sm'
           />
           <p className='mt-2 h-6 text-xs'>

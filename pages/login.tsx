@@ -120,9 +120,13 @@ const Login: NextPage = () => {
     <>
       <Head>
         <title>Refill 로그인</title>
+        <meta
+          name='viewport'
+          content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0'
+        />
       </Head>
-      <div className='flex h-full w-full flex-col items-center bg-white p-6'>
-        <div className='relative z-10 mt-36 mb-[81px] h-[35px] w-[112px]'>
+      <div className='flex h-full w-full flex-col items-center justify-center bg-white p-6'>
+        <div className='relative z-10 mb-[81px] h-[35px] w-[112px]'>
           <Image
             src='/images/logo_mint.png'
             alt='logo'

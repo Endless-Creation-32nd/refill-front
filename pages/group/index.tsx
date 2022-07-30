@@ -70,16 +70,20 @@ const GroupMain = () => {
         </div>
         <div className='mt-10'>
           <h3 className='text-xl font-bold'>추천그룹</h3>
-          <ul className='mt-3 grid grid-cols-2 gap-3'>
-            {groupData &&
-              (groupData.length !== 0 ? (
-                groupData.map((group) => {
+          {groupData &&
+            (groupData.length !== 0 ? (
+              <ul className='mt-3 grid grid-cols-2 gap-3'>
+                {groupData.map((group) => {
                   return <GroupItem key={group.groupId} group={group} />;
-                })
-              ) : (
-                <p>추천 그룹 없음</p>
-              ))}
-          </ul>
+                })}
+              </ul>
+            ) : (
+              <p className='text-center'>
+                추천그룹을 조회하기 위한 그룹 수가 부족합니다.
+                <br />
+                <span className='italic'>그룹을 직접 생성해보세요!</span>
+              </p>
+            ))}
         </div>
       </div>
     </>

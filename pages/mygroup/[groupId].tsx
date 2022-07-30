@@ -21,6 +21,7 @@ import Person from '../../assets/search_person.svg';
 import Setting from '../../assets/member_setting.svg';
 
 import fetchData from '../../utils/fetchData';
+import Head from 'next/head';
 
 const PAGE_SIZE = 10;
 
@@ -60,6 +61,9 @@ const MyGroup = () => {
 
   return (
     <>
+      <Head>
+        <title>내 그룹</title>
+      </Head>
       <Header
         leftChild={<BackButton style={'text-white'} />}
         middleChild={<h3 className='tab-middle-title text-white'>내 그룹</h3>}
