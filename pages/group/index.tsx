@@ -72,7 +72,7 @@ const GroupMain = () => {
           <h3 className='text-xl font-bold'>추천그룹</h3>
           {groupData &&
             (groupData.length !== 0 ? (
-              <ul className='mt-3 grid grid-cols-2 gap-3'>
+              <ul className='mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2'>
                 {groupData.map((group) => {
                   return <GroupItem key={group.groupId} group={group} />;
                 })}

@@ -14,12 +14,13 @@ const GroupItem: React.FC<PropsType> = ({ group }) => {
     <Link href={`/group/${group.groupId}`}>
       <a>
         <li className='rounded-lg border bg-white p-4 shadow-sm'>
-          <ul className='flex flex-wrap gap-2'>
+          <ul className='flex max-h-[56px] flex-wrap gap-2 overflow-hidden'>
+            {/* <ul className='grid grid-flow-col grid-rows-2 gap-2'> */}
             {group.tagList.map((tag, index) => {
               return (
                 <li
                   key={index}
-                  className='rounded-[4px] bg-mint-main px-2 py-1 text-xs'
+                  className='h-max rounded-[4px] bg-mint-main px-2 py-1 text-xs'
                 >
                   # {tag}
                 </li>
