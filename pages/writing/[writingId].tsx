@@ -1,14 +1,16 @@
-import styled from '@emotion/styled';
+import { ReactElement, useEffect, useState } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
-import { ReactElement, useEffect, useState } from 'react';
+
+import { IWriting } from '../../types/IWriting';
+
 import BackButton from '../../components/BackButton';
 import Header from '../../components/header';
 import WritingLayout from '../../components/writing-layout';
-import { IWriting } from '../../types/IWriting';
 
 const Detail = () => {
   const [writing, setWriting] = useState<IWriting>();
+
   useEffect(() => {
     const data = localStorage.getItem('writingItem');
     if (data) {
@@ -42,12 +44,14 @@ const Detail = () => {
                   {writing?.description}
                 </p>
               </div>
-              <a
-                href={writing?.linkUrl}
-                className='fixed inset-x-0 bottom-0 flex justify-center bg-black py-4 text-xl font-bold text-mint-main'
-              >
-                상세정보 보기
-              </a>
+              {writing?.linkUrl && (
+                <a
+                  href={writing?.linkUrl}
+                  className='fixed inset-x-0 bottom-0 flex justify-center bg-black py-4 text-xl font-bold text-mint-main'
+                >
+                  상세정보 보기
+                </a>
+              )}
             </>
           )}
         </div>

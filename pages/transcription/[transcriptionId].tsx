@@ -1,4 +1,6 @@
 import dayjs from 'dayjs';
+import Link from 'next/link';
+import Head from 'next/head';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import {
@@ -29,8 +31,7 @@ import CustomAvatar from '../../components/CustomAvatar';
 import Bookmark from '../../assets/bookmark.svg';
 import FillBookmark from '../../assets/bookmark_fill.svg';
 import Comment from '../../assets/comment.svg';
-import Link from 'next/link';
-import Head from 'next/head';
+import { isURL } from '../../utils/isURL';
 
 const TranscriptionDetail = () => {
   const { data: userData } = useSWR<IUser>('/api/auth', fetchData);
@@ -165,7 +166,7 @@ const TranscriptionDetail = () => {
                     {transcriptionItem.title}
                   </h3>
                   <div className='text-xs'>{transcriptionItem.author}</div>
-                  {transcriptionItem.original && (
+                  {isURL(transcriptionItem.original) ? (
                     <a
                       className='break-all text-xs text-sky-500 underline'
                       target='_blank'
@@ -174,6 +175,10 @@ const TranscriptionDetail = () => {
                     >
                       {transcriptionItem.original}
                     </a>
+                  ) : (
+                    <span className='break-all text-xs'>
+                      {transcriptionItem.original}
+                    </span>
                   )}
                 </div>
                 <div className='flex h-max'>
@@ -182,7 +187,7 @@ const TranscriptionDetail = () => {
                   </button>
                   <button onClick={onClickBookMark}>
                     {transcriptionItem.isBookMark ? (
-                      <FillBookmark></FillBookmark>
+                      <FillBookmark />
                     ) : (
                       <Bookmark />
                     )}
