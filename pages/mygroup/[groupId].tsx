@@ -1,35 +1,43 @@
 import dayjs from 'dayjs';
+import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import useSWR from 'swr';
 import useSWRInfinite from 'swr/infinite';
-import { ReactElement, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
+
 import { IGroup } from '../../types/IGroup';
 import { IUser } from '../../types/IUser';
 import { IGroupTranscription } from '../../types/IGroupTranscription';
+
+import fetchData from '../../utils/fetchData';
 
 import BackButton from '../../components/BackButton';
 import CustomAvatar from '../../components/CustomAvatar';
 import Header from '../../components/header';
 import Layout from '../../components/layout';
 import Sidebar from '../../components/sidebar';
+import Loading from '../../components/loading';
+import ToTopButton from '../../components/ToTopButton';
 
 import Bookmark from '../../assets/bookmark.svg';
 import Comment from '../../assets/comment.svg';
 import Person from '../../assets/search_person.svg';
 import Setting from '../../assets/member_setting.svg';
 
-import fetchData from '../../utils/fetchData';
-import Head from 'next/head';
-
 const PAGE_SIZE = 10;
+const SCROLL_TO_TOP_BUTTON = 1000;
 
 const MyGroup = () => {
+  const router = useRouter();
+  const [showSidebar, setShowSidebar] = useState(false);
+
   const { data: userData } = useSWR<IUser>('/api/auth', fetchData);
   const { data: myGroupData } = useSWR<IGroup>('/api/group', fetchData);
   const {
     data: transcriptionData,
+    error,
     size,
     setSize,
   } = useSWRInfinite<IGroupTranscription[]>(
@@ -39,25 +47,55 @@ const MyGroup = () => {
         : null,
     fetchData
   );
+  const [showToTopButton, setShowToTopButton] = useState(false);
 
-  const router = useRouter();
-  const [showSidebar, setShowSidebar] = useState(false);
+  const transcriptionList = transcriptionData
+    ? ([] as IGroupTranscription[]).concat(...transcriptionData)
+    : [];
+  const isEmpty = transcriptionData?.length === 0;
+  const isLoadingInitialData = !transcriptionData && !error;
+  const isLoadingMore =
+    size > 0 &&
+    transcriptionData &&
+    typeof transcriptionData[size - 1] === 'undefined';
+  const isReachingEnd =
+    isEmpty ||
+    (transcriptionData &&
+      transcriptionData[transcriptionData.length - 1]?.length < PAGE_SIZE);
+
+  useEffect(() => {
+    const onScroll = () => {
+      const clientHeight = document.body.clientHeight;
+      const scrollHeight = document.body.scrollHeight;
+      const scrollY = window.scrollY;
+      if (scrollY + clientHeight > scrollHeight - 100 && !isReachingEnd) {
+        setSize((prevSize) => prevSize + 1);
+      }
+      setShowToTopButton(scrollY > SCROLL_TO_TOP_BUTTON);
+    };
+    if (typeof window) {
+      document.addEventListener('scroll', onScroll);
+    }
+    return () => {
+      document.removeEventListener('scroll', onScroll);
+    };
+  }, [setSize, isReachingEnd]);
+
+  const onCloseSidebar = () => {
+    setShowSidebar(false);
+  };
 
   const leftChild = (
     <button
       className='z-50 flex cursor-pointer items-center text-white'
       onClick={() => setShowSidebar(!showSidebar)}
     >
-      <span className='pt-1 text-xl font-thin'>
+      <span className='text-xl font-thin'>
         {myGroupData?.participationMembers.length}
       </span>
       <Person width='24' height='24' fill='#ffffff' />
     </button>
   );
-
-  const onCloseSidebar = () => {
-    setShowSidebar(false);
-  };
 
   return (
     <>
@@ -98,8 +136,14 @@ const MyGroup = () => {
               priority
             />
           </div>
-          <ul className='py-3 px-6'>
-            {transcriptionData?.flat().map((transcription) => {
+          <ul className='flex flex-col py-3 px-6'>
+            {isLoadingInitialData && (
+              <div className='m-auto'>
+                <Loading />
+              </div>
+            )}
+            {isEmpty && <p>그룹 내 필사 목록이 없습니다.</p>}
+            {transcriptionList.map((transcription) => {
               return (
                 <li key={transcription.transcriptionId} className='mb-5'>
                   <Link
@@ -163,7 +207,13 @@ const MyGroup = () => {
                 </li>
               );
             })}
+            {isLoadingMore && (
+              <div className='m-auto'>
+                <Loading />
+              </div>
+            )}
           </ul>
+          <ToTopButton show={showToTopButton} />
         </div>
       </main>
 
