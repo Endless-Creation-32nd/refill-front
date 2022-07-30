@@ -192,7 +192,7 @@ const GroupAdmin = () => {
   };
   const leftChild = (
     <button className='z-50 flex cursor-pointer items-center'>
-      <span className='pt-1 text-xl font-thin'>
+      <span className='text-xl font-light'>
         {memberData?.participateMembers.length}
       </span>
       <Person width='24' height='24' fill='#000000' />

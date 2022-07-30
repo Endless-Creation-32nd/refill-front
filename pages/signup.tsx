@@ -158,6 +158,7 @@ const Signup: NextPageWithLayout = () => {
             value={form.email}
             onChange={onChangeEmail}
             placeholder='이메일을 입력해 주세요.'
+            inputMode='email'
             className='rounded-md border border-light-gray px-4 py-3 text-sm'
           />
           <p className='mt-2 h-6 text-xs text-warning'>

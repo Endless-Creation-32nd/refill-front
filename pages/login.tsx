@@ -144,6 +144,7 @@ const Login: NextPage = () => {
             value={form.email}
             onChange={onChangeEmail}
             placeholder='이메일'
+            inputMode='email'
             className='w-full rounded-md border border-light-gray px-4 py-3 text-sm'
           />
           <input
