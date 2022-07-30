@@ -10,6 +10,7 @@ import Head from 'next/head';
 import Header from '../../components/header';
 import { IWriting } from '../../types/IWriting';
 import Nav from '../../components/nav';
+import Loading from '../../components/loading';
 
 const LITERATURE = 'LITERATURE';
 const COLUMN = 'COLUMN';
@@ -73,7 +74,7 @@ const Writing = () => {
       <main className='main bg-bgColor'>
         <div className='bg-bgColor pt-16'>
           <div className='relative p-6'>
-            <ul className='mb-6 flex flex-wrap gap-2'>
+            <HorizontalScroll className='scroll-none mb-6 flex snap-x snap-mandatory gap-2 overflow-x-auto'>
               {Object.entries(WRITING_LIST).map((category, index) => {
                 const activeClassName =
                   category[0] === query.category
@@ -82,7 +83,7 @@ const Writing = () => {
                 return (
                   <li
                     key={index}
-                    className={`${activeClassName} rounded-lg border border-mint-main px-3 py-2 text-sm`}
+                    className={`${activeClassName} min-w-max snap-center snap-normal rounded-lg border border-mint-main px-3 py-2 text-sm`}
                   >
                     <Link href={`/writing?category=${category[0]}`}>
                       <a>{category[0]}</a>
@@ -90,9 +91,13 @@ const Writing = () => {
                   </li>
                 );
               })}
-            </ul>
+            </HorizontalScroll>
             <ul className='flex flex-col gap-4'>
-              {!writingData && <>loading...</>}
+              {!writingData && (
+                <div className='m-auto'>
+                  <Loading />
+                </div>
+              )}
               {writingData?.flat().length === 0 && <>NO DATA</>}
               {writingData?.flat().length !== 0 &&
                 writingData?.flat().map((writingItem) => {
@@ -181,4 +186,11 @@ const BookTitle = styled.div`
   -webkit-box-orient: vertical;
 `;
 
+const HorizontalScroll = styled.ul`
+  -ms-overflow-style: 'none';
+  scrollbar-width: none; /* Firefox */
+  &::-webkit-scrollbar {
+    display: none;
+  }
+`;
 export default Writing;

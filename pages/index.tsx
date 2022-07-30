@@ -28,6 +28,7 @@ const Home = () => {
   if (!userData) {
     return null;
   }
+
   return (
     <>
       <Head>
@@ -68,19 +69,23 @@ const Home = () => {
               <span className='text-xs text-middle-gray'>이동진</span>
             </div>
           </div>
-          {myGroupData === null && (
+          {!myGroupData && (
             <div className='mb-4'>
               <h3 className='mb-2 text-xl font-semibold'>추천그룹</h3>
-              <ul className='grid grid-cols-1 gap-3 sm:grid-cols-2'>
-                {groupData &&
-                  (groupData.length !== 0 ? (
-                    groupData.map((group) => {
+              {groupData &&
+                (groupData.length !== 0 ? (
+                  <ul className='grid grid-cols-1 gap-3 sm:grid-cols-2'>
+                    {groupData.map((group) => {
                       return <GroupItem key={group.groupId} group={group} />;
-                    })
-                  ) : (
-                    <p>추천 그룹 없음</p>
-                  ))}
-              </ul>
+                    })}
+                  </ul>
+                ) : (
+                  <p className='text-center'>
+                    추천그룹을 조회하기 위한 그룹 수가 부족합니다.
+                    <br />
+                    <span className='italic'>그룹을 직접 생성해보세요!</span>
+                  </p>
+                ))}
             </div>
           )}
 

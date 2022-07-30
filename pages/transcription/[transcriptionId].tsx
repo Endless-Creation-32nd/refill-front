@@ -30,6 +30,7 @@ import Bookmark from '../../assets/bookmark.svg';
 import FillBookmark from '../../assets/bookmark_fill.svg';
 import Comment from '../../assets/comment.svg';
 import Link from 'next/link';
+import Head from 'next/head';
 
 const TranscriptionDetail = () => {
   const { data: userData } = useSWR<IUser>('/api/auth', fetchData);
@@ -138,6 +139,13 @@ const TranscriptionDetail = () => {
 
   return (
     <>
+      <Head>
+        <title>필사 - {transcriptionItem.title}</title>
+        <meta
+          name='viewport'
+          content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0'
+        />
+      </Head>
       <div className='flex flex-col px-6'>
         {transcriptionItem && (
           <>

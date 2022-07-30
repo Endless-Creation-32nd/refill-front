@@ -14,6 +14,7 @@ import { IGroup } from '../../types/IGroup';
 import { IMember } from '../../types/IMember';
 
 import Person from '../../assets/search_person.svg';
+import Head from 'next/head';
 
 interface DetailMember extends IMember {
   lastWeekRemainActivity: number;
@@ -64,6 +65,9 @@ const GroupAdmin = () => {
         if (error instanceof AuthenticationError) {
           router.back();
           alert(error.message);
+        } else if (errorType === errorTypes.E024) {
+          alert('이미 다른 그룹에 가입한 사용자 입니다.');
+          mutateMemberData();
         } else if (errorType === errorTypes.E025) {
           alert('그룹 제한 인원을 초과하였습니다.');
         }
@@ -197,6 +201,9 @@ const GroupAdmin = () => {
 
   return (
     <>
+      <Head>
+        <title>그룹 멤버 관리</title>
+      </Head>
       <Header
         leftChild={<BackButton />}
         middleChild={<h3 className='tab-middle-title'>그룹 멤버 관리</h3>}
