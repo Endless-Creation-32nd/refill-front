@@ -63,11 +63,6 @@ const Writing = () => {
     isEmpty ||
     (writingData && writingData[writingData.length - 1]?.length < PAGE_SIZE);
 
-  const onClickBookDescription = (writingItem: IWriting) => {
-    localStorage.setItem('writingItem', JSON.stringify(writingItem));
-    router.push(`/writing/${writingItem.writingId}`);
-  };
-
   useEffect(() => {
     const onScroll = () => {
       const clientHeight = document.body.clientHeight;
@@ -85,6 +80,11 @@ const Writing = () => {
       document.removeEventListener('scroll', onScroll);
     };
   }, [setSize, isReachingEnd]);
+
+  const onClickBookDescription = (writingItem: IWriting) => {
+    localStorage.setItem('writingItem', JSON.stringify(writingItem));
+    router.push(`/writing/${writingItem.writingId}`);
+  };
 
   return (
     <>
