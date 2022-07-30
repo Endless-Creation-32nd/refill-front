@@ -123,7 +123,6 @@ const TranscriptionForm = () => {
   };
 
   const toggleWordModal = () => {
-    console.log(wordInputRef);
     wordInputRef?.current?.focus();
     setShowToggleWordModal((prev) => !prev);
   };
@@ -278,6 +277,10 @@ const TranscriptionForm = () => {
     <>
       <Head>
         <title>필사 올리기</title>
+        <meta
+          name='viewport'
+          content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0'
+        />
       </Head>
       <Header
         leftChild={<BackButton />}

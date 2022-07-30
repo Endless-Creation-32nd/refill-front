@@ -24,6 +24,10 @@ const SignupLayout = ({
     <>
       <Head>
         <title>회원가입</title>
+        <meta
+          name='viewport'
+          content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0'
+        />
       </Head>
       <SignupFormContext.Provider value={{ form, setForm }}>
         <SignupHeader middleChild={middleChild} />

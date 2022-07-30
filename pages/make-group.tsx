@@ -5,11 +5,10 @@ import dayjs from 'dayjs';
 import BackButton from '../components/BackButton';
 import GroupLayout from '../components/group-layout';
 import Header from '../components/header';
-import Period from '../assets/group_period.svg';
 import Head from 'next/head';
-import axios from 'axios';
 import { errorTypes } from '../utils';
 import { axiosPrivate } from '../utils/axiosPrivate';
+import { addDays } from '../utils/addDays';
 
 const KEYWORD_LIST = [
   '문학',
@@ -39,8 +38,8 @@ const MakeGroup = () => {
     description: '',
     tagList: [],
     maxMember: 2,
-    startTime: new Date(),
-    endTime: new Date(),
+    startTime: addDays(new Date(), 1),
+    endTime: addDays(new Date(), 1),
     perWeek: 1,
     penalty: false,
   };
@@ -55,9 +54,9 @@ const MakeGroup = () => {
     const { tagList } = form;
     if (
       (!(keyword in selectedKeyword) || !selectedKeyword[keyword]) &&
-      tagList.length >= 5
+      tagList.length >= 4
     ) {
-      alert('1개 이상 5개 이하의 키워드를 설정해주세요!');
+      alert('1개 이상 4개 이하의 키워드를 설정해주세요!');
       return;
     }
 
@@ -95,10 +94,45 @@ const MakeGroup = () => {
   const onSubmit = (e: FormEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
+    const {
+      name,
+      description,
+      tagList,
+      maxMember,
+      startTime,
+      endTime,
+      perWeek,
+      penalty,
+    } = form;
+
+    if (!name || !name.trim()) {
+      alert('그룹 이름을 설정해주세요!');
+      return;
+    }
+    if (!description || !description.trim()) {
+      alert('간단한 그룹 소개를 작성해주세요!');
+      return;
+    }
+    if (tagList.length < 1 || tagList.length > 5) {
+      alert('그룹 목적을 최소 1개, 최대 5개 설정가능합니다.');
+      return;
+    }
+    if (maxMember < 2 || maxMember > 10) {
+      alert('그룹 인원은 최소 2명, 최대 10명 설정가능합니다.');
+      return;
+    }
+    if (perWeek < 1 || perWeek > 10) {
+      alert(
+        '한 주 최소 필사 업로드 개수는 최소 1개, 최대 10개 설정가능합니다.'
+      );
+      return;
+    }
+
     axiosPrivate
       .post('/api/group', form)
       .then((response) => {
         if (response.status === 200) {
+          alert(`${name} 그룹이 생성되었습니다.`);
           router.replace('/group');
         }
       })
@@ -126,6 +160,10 @@ const MakeGroup = () => {
     <>
       <Head>
         <title>그룹 만들기</title>
+        <meta
+          name='viewport'
+          content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0'
+        />
       </Head>
       <Header
         leftChild={<BackButton />}
@@ -142,7 +180,7 @@ const MakeGroup = () => {
                 type='text'
                 name='name'
                 id='group-name'
-                placeholder='그룹이름을 입력해주세요.'
+                placeholder='(필수)그룹이름을 입력해주세요.'
                 value={form.name}
                 onChange={(e) =>
                   setForm((prev) => ({ ...prev, name: e.target.value }))
@@ -160,7 +198,7 @@ const MakeGroup = () => {
               <textarea
                 name='description'
                 id='description'
-                placeholder='간단히 그룹을 소개해 주세요.'
+                placeholder='(필수)간단히 그룹을 소개해 주세요.'
                 value={form.description}
                 onChange={(e) =>
                   setForm((prev) => ({ ...prev, description: e.target.value }))
@@ -246,6 +284,7 @@ const MakeGroup = () => {
                 selectsRange={true}
                 startDate={form.startTime}
                 endDate={form.endTime}
+                minDate={addDays(new Date(), 1)}
                 onChange={(update) => {
                   setForm((prev) => ({
                     ...prev,
@@ -316,6 +355,8 @@ const MakeGroup = () => {
                   className='md:text-basecursor-default flex w-full items-center text-center text-sm font-semibold text-gray-700  outline-none hover:text-black focus:text-black focus:outline-none'
                   name='custom-input-number'
                   value={form.perWeek}
+                  min={1}
+                  max={10}
                   onChange={(e) =>
                     setForm((prev) => ({
                       ...prev,

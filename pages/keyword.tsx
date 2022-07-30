@@ -94,16 +94,27 @@ const Keyword = () => {
       .post('/api/member', { email, password, nickname, tagList })
       .then((response) => {
         if (response.status === 201) {
-          setForm((prev) => ({
-            ...prev,
-            email: '',
-            password: '',
-            passwordConfirm: '',
-            nickname: '',
-            tagList: [],
-          }));
           alert('가입을 축하합니다!');
-          router.replace('/');
+
+          axiosPublic
+            .post('/api/auth/login', { email, password })
+            .then((response) => {
+              const {
+                data: { data },
+              } = response;
+              if (response.status === 200) {
+                localStorage.setItem('accessToken', data.accessToken);
+                setForm((prev) => ({
+                  ...prev,
+                  email: '',
+                  password: '',
+                  passwordConfirm: '',
+                  nickname: '',
+                  tagList: [],
+                }));
+                router.replace('/');
+              }
+            });
         }
       })
       .catch((error) => {

@@ -1,6 +1,10 @@
 import { AxiosError } from 'axios';
 import { axiosPublic } from './axiosPublic';
-import { EmptyAccessTokenError, RefreshTokenError } from './error';
+import {
+  EmptyAccessTokenError,
+  NotFoundError,
+  RefreshTokenError,
+} from './error';
 import { errorTypes } from './errorTypes';
 
 export const refreshTokenFn = async () => {
@@ -33,6 +37,8 @@ export const refreshTokenFn = async () => {
         ) {
           localStorage.removeItem('accessToken');
           throw new RefreshTokenError(error);
+        } else if (errorType === errorTypes.E014) {
+          throw new NotFoundError(error);
         }
       }
     } else if (error instanceof EmptyAccessTokenError) {

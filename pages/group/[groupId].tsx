@@ -82,7 +82,6 @@ const GroupDetail = () => {
         }
       });
   };
-  const aa = () => {};
 
   if (!groupData || !userData) {
     return null;

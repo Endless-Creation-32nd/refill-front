@@ -63,7 +63,7 @@ export class NotFoundError extends ApiError {
 
   constructor(axiosError: AxiosError<ErrorData>) {
     super(axiosError);
-    this.name = 'NOT_FOUNDED';
+    this.name = 'NOT_FOUND';
     this.redirectUrl = '/404';
     this.axiosError = axiosError;
   }
