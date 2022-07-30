@@ -98,18 +98,20 @@ const Home = () => {
                     {myGroupData.name}
                   </span>
                   <dd className='flex justify-end -space-x-3'>
-                    {myGroupData.participationMembers.map((member) => {
-                      return (
-                        <CustomAvatar
-                          key={member.memberId}
-                          image={member.image}
-                          nickname={member.nickname}
-                          width={'w-8'}
-                          height={'h-8'}
-                          size={'32'}
-                        />
-                      );
-                    })}
+                    {myGroupData.participationMembers
+                      .slice(0, 4)
+                      .map((member) => {
+                        return (
+                          <CustomAvatar
+                            key={member.memberId}
+                            image={member.image}
+                            nickname={member.nickname}
+                            width={'w-8'}
+                            height={'h-8'}
+                            size={'32'}
+                          />
+                        );
+                      })}
                   </dd>
                 </div>
                 <dd className='flex items-center gap-1'>

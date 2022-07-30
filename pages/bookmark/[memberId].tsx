@@ -1,16 +1,20 @@
+import { ReactElement, useEffect, useState } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { ReactElement } from 'react';
 import useSWRInfinite from 'swr/infinite';
+
+import fetchData from '../../utils/fetchData';
 
 import BackButton from '../../components/BackButton';
 import Header from '../../components/header';
 import Layout from '../../components/layout';
-import fetchData from '../../utils/fetchData';
+import Loading from '../../components/loading';
+import ToTopButton from '../../components/ToTopButton';
 
 const PAGE_SIZE = 10;
+const SCROLL_TO_TOP_BUTTON = 1000;
 
 interface Transcription {
   transcriptionId: number;
@@ -33,21 +37,55 @@ const BookmarkPage = () => {
     fetchData
   );
 
-  const transcriptions = transcriptionData
+  const [showToTopButton, setShowToTopButton] = useState(false);
+
+  const transcriptionList = transcriptionData
     ? ([] as Transcription[]).concat(...transcriptionData)
     : [];
-  const isLoading = transcriptions && !transcriptionData && !error;
   const isEmpty = transcriptionData?.[0]?.length === 0;
+  const isLoadingInitialData = !transcriptionData && !error;
+  const isLoadingMore =
+    size > 0 &&
+    transcriptionData &&
+    typeof transcriptionData[size - 1] === 'undefined';
+  const isReachingEnd =
+    isEmpty ||
+    (transcriptionData &&
+      transcriptionData[transcriptionData.length - 1]?.length < PAGE_SIZE);
+
+  useEffect(() => {
+    const onScroll = () => {
+      const clientHeight = document.body.clientHeight;
+      const scrollHeight = document.body.scrollHeight;
+      const scrollY = window.scrollY;
+      if (scrollY + clientHeight > scrollHeight - 100 && !isReachingEnd) {
+        setSize((prevSize) => prevSize + 1);
+      }
+      setShowToTopButton(scrollY > SCROLL_TO_TOP_BUTTON);
+    };
+    if (typeof window) {
+      document.addEventListener('scroll', onScroll);
+    }
+    return () => {
+      document.removeEventListener('scroll', onScroll);
+    };
+  }, [setSize, isReachingEnd]);
+
   return (
     <>
       <Head>
         <title>북마크 목록</title>
       </Head>
-      <section className='px-6 pb-6'>
+      <section className='flex flex-col px-6 pb-6'>
         <h3 className='mb-2 text-xl font-semibold'>북마크</h3>
+        {isLoadingInitialData && (
+          <div className='m-auto'>
+            <Loading />
+          </div>
+        )}
         {isEmpty && <p className='m-auto text-sm'>저장한 북마크가 없습니다.</p>}
         <ul className='grid w-full grid-cols-[repeat(3,_1fr)] gap-1 sm:gap-7'>
-          {transcriptions.map((transcription, index) => {
+          {transcriptionList.map((transcription, index) => {
             return (
               <li
                 key={transcription.transcriptionId}
@@ -71,7 +109,13 @@ const BookmarkPage = () => {
             );
           })}
         </ul>
+        {isLoadingMore && (
+          <div className='m-auto'>
+            <Loading />
+          </div>
+        )}
       </section>
+      <ToTopButton show={showToTopButton} />
     </>
   );
 };

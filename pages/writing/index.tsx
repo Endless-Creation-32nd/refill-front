@@ -1,16 +1,20 @@
-import Image from 'next/image';
+import styled from '@emotion/styled';
+import { ReactElement, UIEvent, useEffect, useRef, useState } from 'react';
+import Head from 'next/head';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 import useSWRInfinite from 'swr/infinite';
+
 import fetchData from '../../utils/fetchData';
-import styled from '@emotion/styled';
-import { ReactElement, UIEvent, useEffect, useRef } from 'react';
-import WritingLayout from '../../components/writing-layout';
-import Head from 'next/head';
-import Header from '../../components/header';
+
 import { IWriting } from '../../types/IWriting';
+
+import WritingLayout from '../../components/writing-layout';
+import Header from '../../components/header';
 import Nav from '../../components/nav';
 import Loading from '../../components/loading';
+import ToTopButton from '../../components/ToTopButton';
 
 const LITERATURE = 'LITERATURE';
 const COLUMN = 'COLUMN';
@@ -28,13 +32,15 @@ const WRITING_LIST = {
 type categoryType = '문학' | '시사﹒칼럼' | '외국어' | '기사' | '기타';
 
 const PAGE_SIZE = 10;
+const SCROLL_TO_TOP_BUTTON = 1000;
 
 const Writing = () => {
   const router = useRouter();
   const { query } = router;
   const {
     data: writingData,
-    mutate,
+    error,
+    size,
     setSize,
   } = useSWRInfinite<IWriting[]>(
     (index) =>
@@ -44,28 +50,42 @@ const Writing = () => {
       }&page=${index}&count=${PAGE_SIZE}`,
     fetchData
   );
-  const isEmpty = writingData?.length === 0;
+
+  const [showToTopButton, setShowToTopButton] = useState(false);
+  const writingList = writingData
+    ? ([] as IWriting[]).concat(...writingData)
+    : [];
+  const isEmpty = writingData?.[0]?.length === 0;
+  const isLoadingInitialData = !writingData && !error;
+  const isLoadingMore =
+    size > 0 && writingData && typeof writingData[size - 1] === 'undefined';
   const isReachingEnd =
     isEmpty ||
     (writingData && writingData[writingData.length - 1]?.length < PAGE_SIZE);
-  const scrollRef = useRef();
 
   const onClickBookDescription = (writingItem: IWriting) => {
     localStorage.setItem('writingItem', JSON.stringify(writingItem));
     router.push(`/writing/${writingItem.writingId}`);
   };
 
-  // useEffect(() => {
-  //   function onScroll(e) {
-  //     console.log(e);
-  //   }
-  //   if (typeof window) {
-  //     document.addEventListener('scroll', onScroll);
-  //   }
-  //   return () => {
-  //     document.removeEventListener('scroll', onScroll);
-  //   };
-  // }, []);
+  useEffect(() => {
+    const onScroll = () => {
+      const clientHeight = document.body.clientHeight;
+      const scrollHeight = document.body.scrollHeight;
+      const scrollY = window.scrollY;
+      if (scrollY + clientHeight > scrollHeight - 100 && !isReachingEnd) {
+        setSize((prevSize) => prevSize + 1);
+      }
+      setShowToTopButton(scrollY > SCROLL_TO_TOP_BUTTON);
+    };
+    if (typeof window) {
+      document.addEventListener('scroll', onScroll);
+    }
+    return () => {
+      document.removeEventListener('scroll', onScroll);
+    };
+  }, [setSize, isReachingEnd]);
+
   return (
     <>
       <Head>
@@ -93,58 +113,62 @@ const Writing = () => {
               })}
             </HorizontalScroll>
             <ul className='flex flex-col gap-4'>
-              {!writingData && (
+              {isLoadingInitialData && (
                 <div className='m-auto'>
                   <Loading />
                 </div>
               )}
-              {writingData?.flat().length === 0 && <>NO DATA</>}
-              {writingData?.flat().length !== 0 &&
-                writingData?.flat().map((writingItem) => {
-                  writingItem;
-                  return (
-                    <li
-                      key={writingItem.writingId}
-                      className='rounded-md bg-white shadow-sm'
+              {isEmpty && <p>글감 목록이 없습니다.</p>}
+              {writingList.map((writingItem) => {
+                return (
+                  <li
+                    key={writingItem.writingId}
+                    className='rounded-md bg-white shadow-sm'
+                  >
+                    <button
+                      type='button'
+                      onClick={() => onClickBookDescription(writingItem)}
+                      className='relative flex h-[1px] min-h-[180px] w-[1px] min-w-full gap-4 rounded-md border p-4'
                     >
-                      <button
-                        type='button'
-                        onClick={() => onClickBookDescription(writingItem)}
-                        className='relative flex h-[1px] min-h-[180px] w-[1px] min-w-full gap-4 rounded-md border p-4'
-                      >
-                        {writingItem.imageUrl && (
-                          <div className='relative h-full w-[87px]'>
-                            <Image
-                              src={writingItem.imageUrl}
-                              alt='book'
-                              layout='fill'
-                              objectFit='cover'
-                              className='rounded-md'
-                            />
-                          </div>
-                        )}
-                        <div className='flex flex-1 flex-col gap-2 text-left'>
-                          <h1 className='flex'>
-                            <BookTitle className='flex-1 text-lg font-bold'>
-                              {writingItem.title}
-                            </BookTitle>
-                            <span className='rounded-md bg-mint-main px-2 py-1 text-sm text-white'>
-                              {query.category}
-                            </span>
-                          </h1>
-                          <div className='text-sm text-[#666666]'>
-                            {writingItem.author}
-                          </div>
-                          <EllipsisP className='mt-2 w-full flex-1 text-[#666666] '>
-                            {writingItem.description}
-                          </EllipsisP>
+                      {writingItem.imageUrl && (
+                        <div className='relative h-full w-[87px]'>
+                          <Image
+                            src={writingItem.imageUrl}
+                            alt='book'
+                            layout='fill'
+                            objectFit='cover'
+                            className='rounded-md'
+                          />
                         </div>
-                      </button>
-                    </li>
-                  );
-                })}
+                      )}
+                      <div className='flex flex-1 flex-col gap-2 text-left'>
+                        <h1 className='flex'>
+                          <BookTitle className='flex-1 text-lg font-bold'>
+                            {writingItem.title}
+                          </BookTitle>
+                          <span className='rounded-md bg-mint-main px-2 py-1 text-sm text-white'>
+                            {query.category}
+                          </span>
+                        </h1>
+                        <div className='text-sm text-[#666666]'>
+                          {writingItem.author}
+                        </div>
+                        <EllipsisP className='mt-2 w-full flex-1 text-[#666666] '>
+                          {writingItem.description}
+                        </EllipsisP>
+                      </div>
+                    </button>
+                  </li>
+                );
+              })}
+              {isLoadingMore && (
+                <div className='m-auto'>
+                  <Loading />
+                </div>
+              )}
             </ul>
           </div>
+          <ToTopButton show={showToTopButton} />
         </div>
       </main>
     </>

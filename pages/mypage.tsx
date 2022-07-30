@@ -1,25 +1,24 @@
+import { ReactElement, useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter } from 'next/router';
-import { ReactElement } from 'react';
+import Head from 'next/head';
 import useSWR from 'swr';
 import useSWRInfinite from 'swr/infinite';
 
 import fetchData from '../utils/fetchData';
-import { axiosPrivate } from '../utils/axiosPrivate';
-import { errorTypes } from '../utils';
 
 import CustomAvatar from '../components/CustomAvatar';
 import Header from '../components/header';
 import Layout from '../components/layout';
 import Nav from '../components/nav';
+import Loading from '../components/loading';
+import ToTopButton from '../components/ToTopButton';
 
 import { IProfile } from '../types/IProfile';
 import { IUser } from '../types/IUser';
 
 import Character from '../assets/character.svg';
 import Setting from '../assets/mypage_setting.svg';
-import Head from 'next/head';
 
 interface Transcription {
   transcriptionId: number;
@@ -27,6 +26,7 @@ interface Transcription {
 }
 
 const PAGE_SIZE = 10;
+const SCROLL_TO_TOP_BUTTON = 1000;
 
 const Mypage = () => {
   const { data: userData } = useSWR<IUser>('/api/auth', fetchData);
@@ -46,13 +46,40 @@ const Mypage = () => {
         : null,
     fetchData
   );
-  const router = useRouter();
 
-  const transcriptions = transcriptionData
+  const [showToTopButton, setShowToTopButton] = useState(false);
+
+  const transcriptionList = transcriptionData
     ? ([] as Transcription[]).concat(...transcriptionData)
     : [];
-  const isLoading = transcriptions && !transcriptionData && !error;
   const isEmpty = transcriptionData?.[0]?.length === 0;
+  const isLoadingInitialData = !transcriptionData && !error;
+  const isLoadingMore =
+    size > 0 &&
+    transcriptionData &&
+    typeof transcriptionData[size - 1] === 'undefined';
+  const isReachingEnd =
+    isEmpty ||
+    (transcriptionData &&
+      transcriptionData[transcriptionData.length - 1]?.length < PAGE_SIZE);
+
+  useEffect(() => {
+    const onScroll = () => {
+      const clientHeight = document.body.clientHeight;
+      const scrollHeight = document.body.scrollHeight;
+      const scrollY = window.scrollY;
+      if (scrollY + clientHeight > scrollHeight - 100 && !isReachingEnd) {
+        setSize((prevSize) => prevSize + 1);
+      }
+      setShowToTopButton(scrollY > SCROLL_TO_TOP_BUTTON);
+    };
+    if (typeof window) {
+      document.addEventListener('scroll', onScroll);
+    }
+    return () => {
+      document.removeEventListener('scroll', onScroll);
+    };
+  }, [setSize, isReachingEnd]);
 
   return (
     <>
@@ -118,38 +145,46 @@ const Mypage = () => {
               </>
             )}
           </section>
-          <section></section>
         </section>
 
-        <section className='p-6'>
+        <section className='flex flex-col p-6'>
           <h3 className='mb-2 text-xl font-semibold'>필사기록</h3>
-          {isEmpty && <p>작성한 필사가 없습니다.</p>}
+          {isLoadingInitialData && (
+            <div className='m-auto'>
+              <Loading />
+            </div>
+          )}
+          {isEmpty && <p className='m-auto text-sm'>작성한 필사가 없습니다.</p>}
           <ul className='grid w-full grid-cols-[repeat(3,_1fr)] gap-1 sm:gap-7'>
-            {transcriptionData &&
-              transcriptionData.flat().map((transcription, index) => {
-                return (
-                  <li
-                    key={transcription.transcriptionId}
-                    className='relative w-full after:block after:pb-[100%] after:content-[""]'
-                  >
-                    <div className='absolute h-full w-full'>
-                      <Link
-                        href={`/transcription/${transcription.transcriptionId}`}
-                      >
-                        <a>
-                          <Image
-                            src={transcription.image}
-                            alt='필사'
-                            objectFit='contain'
-                            layout='fill'
-                          />
-                        </a>
-                      </Link>
-                    </div>
-                  </li>
-                );
-              })}
+            {transcriptionList.map((transcription) => {
+              return (
+                <li
+                  key={transcription.transcriptionId}
+                  className='relative w-full after:block after:pb-[100%] after:content-[""]'
+                >
+                  <div className='absolute h-full w-full'>
+                    <Link
+                      href={`/transcription/${transcription.transcriptionId}`}
+                    >
+                      <a>
+                        <Image
+                          src={transcription.image}
+                          alt='필사'
+                          objectFit='contain'
+                          layout='fill'
+                        />
+                      </a>
+                    </Link>
+                  </div>
+                </li>
+              );
+            })}
           </ul>
+          {isLoadingMore && (
+            <div className='m-auto'>
+              <Loading />
+            </div>
+          )}
         </section>
         <Link href={`/write?p=${userData?.memberId}`}>
           <a className='fixed bottom-24 right-1/2 translate-x-1/2 rounded-lg bg-black px-4 py-2 font-semibold text-white shadow-md'>
@@ -157,6 +192,7 @@ const Mypage = () => {
           </a>
         </Link>
       </div>
+      <ToTopButton show={showToTopButton} />
     </>
   );
 };
