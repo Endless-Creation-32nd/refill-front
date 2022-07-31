@@ -72,7 +72,6 @@ const ProfilePage = () => {
       if (scrollY + clientHeight > scrollHeight - 100 && !isReachingEnd) {
         setSize((prevSize) => prevSize + 1);
       }
-      console.log(scrollY);
       setShowToTopButton(scrollY > SCROLL_TO_TOP_BUTTON);
     };
     if (typeof window) {
