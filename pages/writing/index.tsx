@@ -52,30 +52,6 @@ const Writing = () => {
   );
 
   const [showToTopButton, setShowToTopButton] = useState(false);
-  // const {
-  //   data: writingData,
-  //   error,
-  //   size,
-  //   setSize,
-  // } = useSWRInfinite<IWriting[]>(
-  //   (index) =>
-  //     query.category &&
-  //     `/api/writing?category=${
-  //       WRITING_LIST[query.category as categoryType]
-  //     }&page=${index}&count=${PAGE_SIZE}`,
-  //   fetchData
-  // );
-
-  // const writingList = writingData
-  //   ? ([] as IWriting[]).concat(...writingData)
-  //   : [];
-  // const isEmpty = writingData?.[0]?.length === 0;
-  // const isLoadingInitialData = !writingData && !error;
-  // const isLoadingMore =
-  //   size > 0 && writingData && typeof writingData[size - 1] === 'undefined';
-  // const isReachingEnd =
-  //   isEmpty ||
-  //   (writingData && writingData[writingData.length - 1]?.length < PAGE_SIZE);
 
   useEffect(() => {
     const onScroll = () => {

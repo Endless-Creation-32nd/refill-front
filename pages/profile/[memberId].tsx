@@ -51,33 +51,6 @@ const ProfilePage = () => {
       : null
   );
 
-  // const {
-  //   data: transcriptionData,
-  //   error,
-  //   size,
-  //   setSize,
-  // } = useSWRInfinite<Transcription[]>(
-  //   (index) =>
-  //     query.memberId
-  //       ? `/api/member/${query.memberId}/transcription?page=${index}&count=${PAGE_SIZE}`
-  //       : null,
-  //   fetchData
-  // );
-
-  // const transcriptionList = transcriptionData
-  //   ? ([] as Transcription[]).concat(...transcriptionData)
-  //   : [];
-  // const isEmpty = transcriptionData?.[0]?.length === 0;
-  // const isLoadingInitialData = !transcriptionData && !error;
-  // const isLoadingMore =
-  //   size > 0 &&
-  //   transcriptionData &&
-  //   typeof transcriptionData[size - 1] === 'undefined';
-  // const isReachingEnd =
-  //   isEmpty ||
-  //   (transcriptionData &&
-  //     transcriptionData[transcriptionData.length - 1]?.length < PAGE_SIZE);
-
   useEffect(() => {
     const onScroll = () => {
       const clientHeight = document.body.clientHeight;
