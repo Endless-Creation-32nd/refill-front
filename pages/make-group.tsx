@@ -1,14 +1,18 @@
+import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { FormEvent, ReactElement, useState } from 'react';
-import DatePicker from 'react-datepicker';
-import dayjs from 'dayjs';
+
 import BackButton from '../components/BackButton';
 import GroupLayout from '../components/group-layout';
 import Header from '../components/header';
-import Head from 'next/head';
+import CustomDatePicker from '../components/CustomDatePicker';
+
 import { errorTypes } from '../utils';
 import { axiosPrivate } from '../utils/axiosPrivate';
 import { addDays } from '../utils/addDays';
+
+import Plus from '../assets/plus.svg';
+import Minus from '../assets/minus.svg';
 
 const KEYWORD_LIST = [
   '문학',
@@ -54,9 +58,9 @@ const MakeGroup = () => {
     const { tagList } = form;
     if (
       (!(keyword in selectedKeyword) || !selectedKeyword[keyword]) &&
-      tagList.length >= 4
+      tagList.length >= 5
     ) {
-      alert('1개 이상 4개 이하의 키워드를 설정해주세요!');
+      alert('1개 이상 5개 이하의 키워드를 설정해주세요!');
       return;
     }
 
@@ -234,106 +238,55 @@ const MakeGroup = () => {
               </ul>
             </div>
 
-            <label htmlFor='custom-input-number' className='w-full'>
+            <div className='w-full'>
               <span>최대인원</span>
-              <div className='relative mt-1 flex h-10 w-full flex-row rounded-lg border-[1px] bg-transparent'>
+              <div className='relative mt-1 flex h-10 w-full flex-row rounded-lg border bg-transparent'>
                 <button
                   type='button'
                   data-action='decrement'
-                  onClick={() =>
+                  onClick={() => {
+                    if (form.maxMember <= 2) {
+                      alert('그룹 최소 인원은 2명입니다.');
+                      return;
+                    }
                     setForm((prev) => ({
                       ...prev,
                       maxMember: prev.maxMember - 1,
-                    }))
-                  }
-                  className=' h-full w-20 cursor-pointer rounded-l outline-none hover:bg-gray-400 hover:text-gray-700'
+                    }));
+                  }}
+                  className='h-full w-16 cursor-pointer rounded-l outline-none hover:bg-gray-400'
                 >
-                  <span className='m-auto text-2xl font-thin'>-</span>
+                  <Minus className='m-auto' />
                 </button>
-                <input
-                  type='number'
-                  className='md:text-basecursor-default flex w-full items-center text-center text-sm font-semibold text-gray-700  outline-none hover:text-black focus:text-black focus:outline-none'
-                  name='custom-input-number'
-                  value={form.maxMember}
-                  onChange={(e) =>
-                    setForm((prev) => ({
-                      ...prev,
-                      maxMember: Number(e.target.value),
-                    }))
-                  }
-                />
+                <span className='flex flex-1 items-center justify-center text-center text-sm font-semibold text-gray-700 outline-none hover:text-black focus:text-black focus:outline-none md:text-base'>
+                  {form.maxMember}
+                </span>
                 <button
                   type='button'
                   data-action='increment'
-                  onClick={() =>
+                  onClick={() => {
+                    if (form.maxMember >= 10) {
+                      alert('그룹 최대 인원은 10명입니다.');
+                      return;
+                    }
                     setForm((prev) => ({
                       ...prev,
                       maxMember: prev.maxMember + 1,
-                    }))
-                  }
-                  className='h-full w-20 cursor-pointer rounded-r hover:bg-gray-400 hover:text-gray-700'
+                    }));
+                  }}
+                  className='h-full w-16 cursor-pointer rounded-r outline-none hover:bg-gray-400'
                 >
-                  <span className='m-auto text-2xl font-thin'>+</span>
+                  <Plus className='m-auto' />
                 </button>
               </div>
-            </label>
+            </div>
 
             <label htmlFor='perWeek' className='w-full'>
               <span>기간</span>
-              <DatePicker
-                selectsRange={true}
-                startDate={form.startTime}
-                endDate={form.endTime}
-                minDate={addDays(new Date(), 1)}
-                onChange={(update) => {
-                  setForm((prev) => ({
-                    ...prev,
-                    startTime: update[0],
-                    endTime: update[1],
-                  }));
-                }}
-                required
-                renderCustomHeader={({
-                  date,
-                  decreaseMonth,
-                  increaseMonth,
-                  prevMonthButtonDisabled,
-                  nextMonthButtonDisabled,
-                }) => (
-                  <div className='flex items-center justify-between px-2 py-2'>
-                    <span className='text-sm text-gray-700'>
-                      {dayjs(date).format('YYYY MMMM DD')}
-                    </span>
-
-                    <div className='space-x-2'>
-                      <button
-                        onClick={decreaseMonth}
-                        disabled={prevMonthButtonDisabled}
-                        type='button'
-                        className={`${
-                          prevMonthButtonDisabled &&
-                          'cursor-not-allowed opacity-50'
-                        } inline-flex rounded border border-gray-300 bg-white p-1 text-sm font-medium text-gray-700
-                    shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0`}
-                      >
-                        {'<'}
-                      </button>
-
-                      <button
-                        onClick={increaseMonth}
-                        disabled={nextMonthButtonDisabled}
-                        type='button'
-                        className={`${
-                          nextMonthButtonDisabled &&
-                          'cursor-not-allowed opacity-50'
-                        } inline-flex rounded border border-gray-300 bg-white p-1 text-sm font-medium text-gray-700
-                    shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0`}
-                      >
-                        {'>'}
-                      </button>
-                    </div>
-                  </div>
-                )}
+              <CustomDatePicker
+                startTime={form.startTime}
+                endTime={form.endTime}
+                setForm={setForm}
               />
             </label>
 
@@ -343,36 +296,33 @@ const MakeGroup = () => {
                 <button
                   type='button'
                   data-action='decrement'
-                  onClick={() =>
-                    setForm((prev) => ({ ...prev, perWeek: prev.perWeek - 1 }))
-                  }
-                  className=' h-full w-20 cursor-pointer rounded-l outline-none hover:bg-gray-400 hover:text-gray-700'
+                  onClick={() => {
+                    if (form.perWeek <= 1) {
+                      alert('한 주 최소 필사 횟수는 1회입니다.');
+                      return;
+                    }
+                    setForm((prev) => ({ ...prev, perWeek: prev.perWeek - 1 }));
+                  }}
+                  className='h-full w-16 cursor-pointer rounded-l outline-none hover:bg-gray-400'
                 >
-                  <span className='m-auto text-2xl font-thin'>-</span>
+                  <Minus className='m-auto' />
                 </button>
-                <input
-                  type='number'
-                  className='md:text-basecursor-default flex w-full items-center text-center text-sm font-semibold text-gray-700  outline-none hover:text-black focus:text-black focus:outline-none'
-                  name='custom-input-number'
-                  value={form.perWeek}
-                  min={1}
-                  max={10}
-                  onChange={(e) =>
-                    setForm((prev) => ({
-                      ...prev,
-                      perWeek: Number(e.target.value),
-                    }))
-                  }
-                />
+                <span className='flex flex-1 items-center justify-center text-center text-sm font-semibold text-gray-700 outline-none hover:text-black focus:text-black focus:outline-none md:text-base'>
+                  {form.perWeek}
+                </span>
                 <button
                   type='button'
                   data-action='increment'
-                  onClick={() =>
-                    setForm((prev) => ({ ...prev, perWeek: prev.perWeek + 1 }))
-                  }
-                  className='h-full w-20 cursor-pointer rounded-r hover:bg-gray-400 hover:text-gray-700'
+                  onClick={() => {
+                    if (form.perWeek >= 10) {
+                      alert('한 주 최대 필사 횟수는 10회입니다.');
+                      return;
+                    }
+                    setForm((prev) => ({ ...prev, perWeek: prev.perWeek + 1 }));
+                  }}
+                  className='h-full w-16 cursor-pointer rounded-r outline-none hover:bg-gray-400'
                 >
-                  <span className='m-auto text-2xl font-thin'>+</span>
+                  <Plus className='m-auto' />
                 </button>
               </div>
             </label>
@@ -414,4 +364,5 @@ const MakeGroup = () => {
 MakeGroup.getLayout = function getLayout(page: ReactElement) {
   return <GroupLayout>{page}</GroupLayout>;
 };
+
 export default MakeGroup;
