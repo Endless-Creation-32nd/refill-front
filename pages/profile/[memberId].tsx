@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import Image from 'next/image';
 import useSWR from 'swr';
+import { throttle } from 'lodash';
 
 import fetchData from '../../utils/fetchData';
 import { useInfiniteScroll } from '../../utils/useInfiniteScroll';
@@ -52,7 +53,7 @@ const ProfilePage = () => {
   );
 
   useEffect(() => {
-    const onScroll = () => {
+    const throttledScroll = throttle(() => {
       const clientHeight = document.body.clientHeight;
       const scrollHeight = document.body.scrollHeight;
       const scrollY = window.scrollY;
@@ -60,12 +61,13 @@ const ProfilePage = () => {
         setSize((prevSize) => prevSize + 1);
       }
       setShowToTopButton(scrollY > SCROLL_TO_TOP_BUTTON);
-    };
+    }, 1000);
+
     if (typeof window) {
-      document.addEventListener('scroll', onScroll);
+      document.addEventListener('scroll', throttledScroll);
     }
     return () => {
-      document.removeEventListener('scroll', onScroll);
+      document.removeEventListener('scroll', throttledScroll);
     };
   }, [setSize, isReachingEnd]);
 

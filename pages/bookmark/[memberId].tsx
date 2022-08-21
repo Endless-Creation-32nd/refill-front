@@ -3,6 +3,7 @@ import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { throttle } from 'lodash';
 
 import { useInfiniteScroll } from '../../utils/useInfiniteScroll';
 
@@ -39,7 +40,7 @@ const BookmarkPage = () => {
   );
 
   useEffect(() => {
-    const onScroll = () => {
+    const throttledScroll = throttle(() => {
       const clientHeight = document.body.clientHeight;
       const scrollHeight = document.body.scrollHeight;
       const scrollY = window.scrollY;
@@ -47,12 +48,13 @@ const BookmarkPage = () => {
         setSize((prevSize) => prevSize + 1);
       }
       setShowToTopButton(scrollY > SCROLL_TO_TOP_BUTTON);
-    };
+    }, 1000);
+
     if (typeof window) {
-      document.addEventListener('scroll', onScroll);
+      document.addEventListener('scroll', throttledScroll);
     }
     return () => {
-      document.removeEventListener('scroll', onScroll);
+      document.removeEventListener('scroll', throttledScroll);
     };
   }, [setSize, isReachingEnd]);
 
