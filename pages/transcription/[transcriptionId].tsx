@@ -17,10 +17,12 @@ import Sheet from 'react-modal-sheet';
 import { IUser } from '../../types/IUser';
 import { IProfile } from '../../types/IProfile';
 import { IUserTranslation } from '../../types/IUserTranscription';
+import { IComment } from '../../types/IComment';
 
 import { errorTypes } from '../../utils';
 import fetchData from '../../utils/fetchData';
 import { axiosPrivate } from '../../utils/axiosPrivate';
+import { isURL } from '../../utils/isURL';
 
 import BackButton from '../../components/BackButton';
 import Header from '../../components/header';
@@ -31,7 +33,6 @@ import CustomAvatar from '../../components/CustomAvatar';
 import Bookmark from '../../assets/bookmark.svg';
 import FillBookmark from '../../assets/bookmark_fill.svg';
 import Comment from '../../assets/comment.svg';
-import { isURL } from '../../utils/isURL';
 
 const TranscriptionDetail = () => {
   const { data: userData } = useSWR<IUser>('/api/auth', fetchData);
@@ -100,13 +101,30 @@ const TranscriptionDetail = () => {
       return;
     }
 
+    mutateTranscription(
+      {
+        ...transcriptionItem,
+        commentList: transcriptionItem.commentList.concat({
+          commentId: Date.now(),
+          content: comment,
+          createdAt: new Date().toString(),
+          updatedAt: new Date().toString(),
+          memberId: profileData?.memberId,
+          nickname: profileData?.nickname,
+          image: profileData?.image,
+        } as IComment),
+      },
+      false
+    ).then(() => {
+      setComment('');
+    });
+
     axiosPrivate
       .post(`/api/transcription/${query.transcriptionId}/comment`, {
         content: comment,
       })
       .then((response) => {
         if (response.status === 200) {
-          setComment('');
           mutateTranscription();
         }
       })
@@ -123,6 +141,9 @@ const TranscriptionDetail = () => {
       alert('이미 북마크에 저장하였습니다.');
       return;
     }
+
+    mutateTranscription({ ...transcriptionItem, isBookMark: true }, false);
+
     axiosPrivate
       .post(`/api/transcription/${query.transcriptionId}/bookmark`)
       .then((response) => {

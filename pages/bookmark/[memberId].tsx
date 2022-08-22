@@ -3,9 +3,9 @@ import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import useSWRInfinite from 'swr/infinite';
+import { throttle } from 'lodash';
 
-import fetchData from '../../utils/fetchData';
+import { useInfiniteScroll } from '../../utils/useInfiniteScroll';
 
 import BackButton from '../../components/BackButton';
 import Header from '../../components/header';
@@ -24,37 +24,23 @@ const BookmarkPage = () => {
   const router = useRouter();
   const { query } = router;
 
-  const {
-    data: transcriptionData,
-    error,
-    size,
-    setSize,
-  } = useSWRInfinite<Transcription[]>(
-    (index) =>
-      query.memberId
-        ? `/api/member/${query.memberId}/bookmark?page=${index}&count=${PAGE_SIZE}`
-        : null,
-    fetchData
-  );
-
   const [showToTopButton, setShowToTopButton] = useState(false);
 
-  const transcriptionList = transcriptionData
-    ? ([] as Transcription[]).concat(...transcriptionData)
-    : [];
-  const isEmpty = transcriptionData?.[0]?.length === 0;
-  const isLoadingInitialData = !transcriptionData && !error;
-  const isLoadingMore =
-    size > 0 &&
-    transcriptionData &&
-    typeof transcriptionData[size - 1] === 'undefined';
-  const isReachingEnd =
-    isEmpty ||
-    (transcriptionData &&
-      transcriptionData[transcriptionData.length - 1]?.length < PAGE_SIZE);
+  const {
+    data: transcriptionList,
+    setSize,
+    isEmpty,
+    isLoadingInitialData,
+    isLoadingMore,
+    isReachingEnd,
+  } = useInfiniteScroll<Transcription>((index) =>
+    query.memberId
+      ? `/api/member/${query.memberId}/bookmark?page=${index}&count=${PAGE_SIZE}`
+      : null
+  );
 
   useEffect(() => {
-    const onScroll = () => {
+    const throttledScroll = throttle(() => {
       const clientHeight = document.body.clientHeight;
       const scrollHeight = document.body.scrollHeight;
       const scrollY = window.scrollY;
@@ -62,12 +48,13 @@ const BookmarkPage = () => {
         setSize((prevSize) => prevSize + 1);
       }
       setShowToTopButton(scrollY > SCROLL_TO_TOP_BUTTON);
-    };
+    }, 1000);
+
     if (typeof window) {
-      document.addEventListener('scroll', onScroll);
+      document.addEventListener('scroll', throttledScroll);
     }
     return () => {
-      document.removeEventListener('scroll', onScroll);
+      document.removeEventListener('scroll', throttledScroll);
     };
   }, [setSize, isReachingEnd]);
 

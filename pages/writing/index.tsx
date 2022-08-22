@@ -1,14 +1,14 @@
 import styled from '@emotion/styled';
-import { ReactElement, UIEvent, useEffect, useRef, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import useSWRInfinite from 'swr/infinite';
-
-import fetchData from '../../utils/fetchData';
+import { throttle, debounce } from 'lodash';
 
 import { IWriting } from '../../types/IWriting';
+
+import { useInfiniteScroll } from '../../utils/useInfiniteScroll';
 
 import WritingLayout from '../../components/writing-layout';
 import Header from '../../components/header';
@@ -38,33 +38,24 @@ const Writing = () => {
   const router = useRouter();
   const { query } = router;
   const {
-    data: writingData,
-    error,
-    size,
+    data: writingList,
     setSize,
-  } = useSWRInfinite<IWriting[]>(
+    isEmpty,
+    isLoadingInitialData,
+    isLoadingMore,
+    isReachingEnd,
+  } = useInfiniteScroll<IWriting>(
     (index) =>
       query.category &&
       `/api/writing?category=${
         WRITING_LIST[query.category as categoryType]
-      }&page=${index}&count=${PAGE_SIZE}`,
-    fetchData
+      }&page=${index}&count=${PAGE_SIZE}`
   );
 
   const [showToTopButton, setShowToTopButton] = useState(false);
-  const writingList = writingData
-    ? ([] as IWriting[]).concat(...writingData)
-    : [];
-  const isEmpty = writingData?.[0]?.length === 0;
-  const isLoadingInitialData = !writingData && !error;
-  const isLoadingMore =
-    size > 0 && writingData && typeof writingData[size - 1] === 'undefined';
-  const isReachingEnd =
-    isEmpty ||
-    (writingData && writingData[writingData.length - 1]?.length < PAGE_SIZE);
 
   useEffect(() => {
-    const onScroll = () => {
+    const throttledScroll = throttle(() => {
       const clientHeight = document.body.clientHeight;
       const scrollHeight = document.body.scrollHeight;
       const scrollY = window.scrollY;
@@ -72,12 +63,13 @@ const Writing = () => {
         setSize((prevSize) => prevSize + 1);
       }
       setShowToTopButton(scrollY > SCROLL_TO_TOP_BUTTON);
-    };
+    }, 1000);
+
     if (typeof window) {
-      document.addEventListener('scroll', onScroll);
+      document.addEventListener('scroll', throttledScroll);
     }
     return () => {
-      document.removeEventListener('scroll', onScroll);
+      document.removeEventListener('scroll', throttledScroll);
     };
   }, [setSize, isReachingEnd]);
 

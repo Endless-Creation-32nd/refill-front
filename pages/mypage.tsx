@@ -3,9 +3,10 @@ import Link from 'next/link';
 import Image from 'next/image';
 import Head from 'next/head';
 import useSWR from 'swr';
-import useSWRInfinite from 'swr/infinite';
+import { throttle } from 'lodash';
 
 import fetchData from '../utils/fetchData';
+import { useInfiniteScroll } from '../utils/useInfiniteScroll';
 
 import CustomAvatar from '../components/CustomAvatar';
 import Header from '../components/header';
@@ -34,37 +35,24 @@ const Mypage = () => {
     userData ? `/api/member/${userData.memberId}` : null,
     fetchData
   );
+
   const {
-    data: transcriptionData,
-    error,
-    size,
+    data: transcriptionList,
     setSize,
-  } = useSWRInfinite<Transcription[]>(
-    (index) =>
-      userData
-        ? `/api/member/${userData.memberId}/transcription?page=${index}&count=${PAGE_SIZE}`
-        : null,
-    fetchData
+    isEmpty,
+    isLoadingInitialData,
+    isLoadingMore,
+    isReachingEnd,
+  } = useInfiniteScroll<Transcription>((index) =>
+    userData
+      ? `/api/member/${userData.memberId}/transcription?page=${index}&count=${PAGE_SIZE}`
+      : null
   );
 
   const [showToTopButton, setShowToTopButton] = useState(false);
 
-  const transcriptionList = transcriptionData
-    ? ([] as Transcription[]).concat(...transcriptionData)
-    : [];
-  const isEmpty = transcriptionData?.[0]?.length === 0;
-  const isLoadingInitialData = !transcriptionData && !error;
-  const isLoadingMore =
-    size > 0 &&
-    transcriptionData &&
-    typeof transcriptionData[size - 1] === 'undefined';
-  const isReachingEnd =
-    isEmpty ||
-    (transcriptionData &&
-      transcriptionData[transcriptionData.length - 1]?.length < PAGE_SIZE);
-
   useEffect(() => {
-    const onScroll = () => {
+    const throttledScroll = throttle(() => {
       const clientHeight = document.body.clientHeight;
       const scrollHeight = document.body.scrollHeight;
       const scrollY = window.scrollY;
@@ -72,12 +60,13 @@ const Mypage = () => {
         setSize((prevSize) => prevSize + 1);
       }
       setShowToTopButton(scrollY > SCROLL_TO_TOP_BUTTON);
-    };
+    }, 1000);
+
     if (typeof window) {
-      document.addEventListener('scroll', onScroll);
+      document.addEventListener('scroll', throttledScroll);
     }
     return () => {
-      document.removeEventListener('scroll', onScroll);
+      document.removeEventListener('scroll', throttledScroll);
     };
   }, [setSize, isReachingEnd]);
 
