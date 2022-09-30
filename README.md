@@ -30,5 +30,5 @@
 - 속도가 느린 네트워크 환경에서 발생하는 딜레이를 **optimistic UI**를 적용하여 UI/UX 개선 [PR#42](https://github.com/Endless-Creation-32nd/refill-front/pull/42)
 
 ## 🛠 리팩터링 진행 중
-- [ ] 페이지 컴포넌트에 작성된 **API로직(API 처리 결과에 따른 상태로직도 포함)**을 **hook으로 분리**합니다. [issue#45](https://github.com/Endless-Creation-32nd/refill-front/issues/45)
+- [ ] 페이지 컴포넌트에 작성된 API로직(API 처리 결과에 따른 상태로직도 포함)을 **hook으로 분리**합니다. [issue#45](https://github.com/Endless-Creation-32nd/refill-front/issues/45)
 - [ ] 이미지를 불러올 때 **로딩상태일 경우 빈공간으로 보이는 것을 스캘레톤을 적용**하여 UI에 표시합니다.
